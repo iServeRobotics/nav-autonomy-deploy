@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   nav_autonomy:
-    image: bonaiserve/nav_autonomy:${IMAGE_TAG:-latest}
+    image: iserverobotics/nav_autonomy:${IMAGE_TAG:-latest}
     container_name: nav_autonomy
 
     # Shared memory for ROS 2 FastDDS
