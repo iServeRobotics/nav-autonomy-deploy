@@ -1,0 +1,70 @@
+services:
+  iserve_map_humble:
+    image: bonaiserve/iserve_map:humble
+    container_name: iserve_map_humble
+    restart: unless-stopped
+    profiles: ["humble"]
+
+    shm_size: '2gb'
+    network_mode: host
+
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+
+    volumes:
+      - ./maps:/iserve_ws/maps:rw
+      - ./config/iserve_map_deploy.yaml:/iserve_ws/confi./config/iserve_map_deploy.yaml:ro
+
+    command:
+      - bash
+      - -c
+      - |
+        echo "=== iServe Map (Humble) ==="
+        echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
+        echo "Auto-save: ON | Publish: OFF"
+        bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
+        ros2 launch iserve_map iserve_map.launch.py \
+          params_file:=/iserve_ws/confi./config/iserve_map_deploy.yaml &
+        MAP_PID=$!
+        sleep 2
+        echo "Starting Foxglove Bridge on port 8766..."
+        ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
+        FG_PID=$!
+        wait $MAP_PID $FG_PID
+
+  iserve_map_jazzy:
+    image: bonaiserve/iserve_map:jazzy
+    container_name: iserve_map_jazzy
+    restart: unless-stopped
+    profiles: ["jazzy"]
+
+    shm_size: '2gb'
+    network_mode: host
+
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+
+    volumes:
+      - ./maps:/iserve_ws/maps:rw
+      - ./config/iserve_map_deploy.yaml:/iserve_ws/confi./config/iserve_map_deploy.yaml:ro
+
+    command:
+      - bash
+      - -c
+      - |
+        echo "=== iServe Map (Jazzy) ==="
+        echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
+        echo "Auto-save: ON | Publish: OFF"
+        bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
+        ros2 launch iserve_map iserve_map.launch.py \
+          params_file:=/iserve_ws/confi./config/iserve_map_deploy.yaml &
+        MAP_PID=$!
+        sleep 2
+        echo "Starting Foxglove Bridge on port 8766..."
+        ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
+        FG_PID=$!
+        wait $MAP_PID $FG_PID
