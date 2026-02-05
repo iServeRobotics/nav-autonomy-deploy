@@ -72,7 +72,7 @@ services:
       - -c
       - |
         echo "Starting real robot system with route planner..."
-        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py &
+        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true &
         NAV_PID=$$!
         sleep 2
         if [ "$$USE_RVIZ" = "true" ]; then
