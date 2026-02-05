@@ -1,0 +1,82 @@
+version: "3.8"
+
+services:
+  nav_autonomy:
+    image: bonaiserve/nav_autonomy:${IMAGE_TAG:-latest}
+    container_name: nav_autonomy
+
+    # Shared memory for ROS 2 FastDDS
+    shm_size: '8gb'
+
+    stdin_open: true
+    tty: true
+
+    # Host network required for ROS 2 DDS discovery and hardware access
+    network_mode: host
+
+    # Privileged for hardware device access
+    privileged: true
+
+    # GPU runtime (set DOCKER_RUNTIME=nvidia in .env if needed)
+    runtime: ${DOCKER_RUNTIME:-runc}
+
+    restart: unless-stopped
+
+    # Load hardware configuration from .env
+    env_file:
+      - .env
+
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - LIDAR_INTERFACE=${LIDAR_INTERFACE:-}
+      - LIDAR_COMPUTER_IP=${LIDAR_COMPUTER_IP:-192.168.1.5}
+      - LIDAR_GATEWAY=${LIDAR_GATEWAY:-192.168.1.1}
+      - LIDAR_IP=${LIDAR_IP:-192.168.1.116}
+      - MOTOR_SERIAL_DEVICE=${MOTOR_SERIAL_DEVICE:-/dev/ttyACM0}
+      - ENABLE_WIFI_BUFFER=${ENABLE_WIFI_BUFFER:-false}
+      - USE_RVIZ=${USE_RVIZ:-false}
+      - MAP_PATH=${MAP_PATH:-}
+
+    volumes:
+      # X11 for GUI (RViz)
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${HOME}/.Xauthority:/root/.Xauthority:rw
+      # Time zone
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      # Persistent maps and logs
+      - ./maps:/ros2_ws/maps:rw
+      - ./logs:/ros2_ws/logs:rw
+
+    devices:
+      - /dev/input:/dev/input
+      - /dev/dri:/dev/dri
+      - ${MOTOR_SERIAL_DEVICE:-/dev/ttyACM0}:${MOTOR_SERIAL_DEVICE:-/dev/ttyACM0}
+
+    group_add:
+      - ${INPUT_GID:-995}
+      - ${DIALOUT_GID:-20}
+
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_TIME
+
+    command:
+      - bash
+      - -c
+      - |
+        echo "Starting real robot system with route planner..."
+        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py &
+        NAV_PID=$$!
+        sleep 2
+        if [ "$$USE_RVIZ" = "true" ]; then
+          echo "Starting RViz2..."
+          ros2 run rviz2 rviz2 -d /ros2_ws/src/route_planner/far_planner/rviz/default.rviz &
+        fi
+        wait $$NAV_PID

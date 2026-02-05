@@ -1,0 +1,5 @@
+maps/*.pcd
+maps/*.pickle
+logs/*
+!logs/.gitkeep
+!maps/.gitkeep
