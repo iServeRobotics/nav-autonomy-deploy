@@ -34,7 +34,7 @@ case "$DISTRO" in
 esac
 
 # Pull image if not available locally
-IMAGE="bonaiserve/iserve_map:${DISTRO}"
+IMAGE="iserverobotics/iserve_map:${DISTRO}"
 if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; then
     echo -e "${YELLOW}Pulling ${IMAGE}...${NC}"
     docker pull "$IMAGE"
