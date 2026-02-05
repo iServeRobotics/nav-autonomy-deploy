@@ -75,6 +75,8 @@ services:
         ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true &
         NAV_PID=$$!
         sleep 2
+        echo "Starting Foxglove Bridge on port 8765..."
+        ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 &
         if [ "$$USE_RVIZ" = "true" ]; then
           echo "Starting RViz2..."
           ros2 run rviz2 rviz2 -d /ros2_ws/src/route_planner/far_planner/rviz/default.rviz &
