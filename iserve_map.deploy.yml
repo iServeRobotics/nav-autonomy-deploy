@@ -1,6 +1,6 @@
 services:
   iserve_map_humble:
-    image: bonaiserve/iserve_map:humble
+    image: iserverobotics/iserve_map:humble
     container_name: iserve_map_humble
     restart: unless-stopped
     profiles: ["humble"]
@@ -35,7 +35,7 @@ services:
         wait $MAP_PID $FG_PID
 
   iserve_map_jazzy:
-    image: bonaiserve/iserve_map:jazzy
+    image: iserverobotics/iserve_map:jazzy
     container_name: iserve_map_jazzy
     restart: unless-stopped
     profiles: ["jazzy"]
