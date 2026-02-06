@@ -68,3 +68,19 @@ services:
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
         wait $MAP_PID $FG_PID
+
+  # CPU/Memory monitor for nav_autonomy container
+  nav-monitor:
+    image: iserverobotics/nav-monitor:${MONITOR_IMAGE_TAG:-latest}
+    container_name: nav_monitor
+    restart: unless-stopped
+
+    environment:
+      - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
+      - INTERVAL=${MONITOR_INTERVAL:-1.0}
+
+    volumes:
+      # Docker socket for container access
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Persist monitor logs
+      - ./logs/monitor:/logs

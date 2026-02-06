@@ -33,19 +33,28 @@ case "$DISTRO" in
         exit 1 ;;
 esac
 
-# Pull image if not available locally
+# Pull images if not available locally
 IMAGE="iserverobotics/iserve_map:${DISTRO}"
+MONITOR_IMAGE="iserverobotics/nav-monitor:${MONITOR_IMAGE_TAG:-latest}"
+
 if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; then
     echo -e "${YELLOW}Pulling ${IMAGE}...${NC}"
     docker pull "$IMAGE"
 fi
 
-mkdir -p maps
+if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${MONITOR_IMAGE}$"; then
+    echo -e "${YELLOW}Pulling ${MONITOR_IMAGE}...${NC}"
+    docker pull "$MONITOR_IMAGE" || echo -e "${YELLOW}Monitor image not available, continuing without it${NC}"
+fi
+
+mkdir -p maps logs/monitor
 
 echo -e "${GREEN}================================================${NC}"
-echo -e "${GREEN}Deploying iServe Map${NC}"
+echo -e "${GREEN}Deploying iServe Map + Monitor${NC}"
 echo -e "${GREEN}ROS Distribution: ${DISTRO}${NC}"
 echo -e "${GREEN}ROS Domain ID:    ${ROS_DOMAIN_ID:-42}${NC}"
+echo -e "${GREEN}Monitor Target:   ${TARGET_CONTAINER:-nav_autonomy}${NC}"
+echo -e "${GREEN}Monitor Interval: ${MONITOR_INTERVAL:-1.0}s${NC}"
 echo -e "${GREEN}Publish map:      OFF${NC}"
 echo -e "${GREEN}Auto-save:        every 10s${NC}"
 echo -e "${GREEN}================================================${NC}"
@@ -59,4 +68,5 @@ echo -e "Clear poses:  ${YELLOW}ros2 service call /pose_repeater/clear_poses std
 echo -e "Set loops:    ${YELLOW}ros2 param set /pose_repeater repeat_count 0${NC}  (0=infinite, N=N loops)"
 echo ""
 
+# Start iserve_map with the selected profile + nav-monitor (no profile = always starts)
 docker compose -f iserve_map.deploy.yml --profile "$DISTRO" up
