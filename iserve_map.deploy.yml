@@ -12,10 +12,15 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+      - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
+      - OUTPUT_DIR=/iserve_ws/logs/monitor
+      - INTERVAL=${MONITOR_INTERVAL:-1.0}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
-      - ./config/iserve_map_deploy.yaml:/iserve_ws/confi./config/iserve_map_deploy.yaml:ro
+      - ./config/iserve_map_deploy.yaml:/iserve_ws/config/iserve_map_deploy.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./logs/monitor:/iserve_ws/logs/monitor:rw
 
     command:
       - bash
@@ -26,12 +31,14 @@ services:
         echo "Auto-save: ON | Publish: OFF"
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
-          params_file:=/iserve_ws/confi./config/iserve_map_deploy.yaml &
+          params_file:=/iserve_ws/config/iserve_map_deploy.yaml &
         MAP_PID=$!
         sleep 2
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
+        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
+        python3 /iserve_ws/scripts/nav_monitor.py &
         wait $MAP_PID $FG_PID
 
   iserve_map_jazzy:
@@ -47,10 +54,15 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+      - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
+      - OUTPUT_DIR=/iserve_ws/logs/monitor
+      - INTERVAL=${MONITOR_INTERVAL:-1.0}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
-      - ./config/iserve_map_deploy.yaml:/iserve_ws/confi./config/iserve_map_deploy.yaml:ro
+      - ./config/iserve_map_deploy.yaml:/iserve_ws/config/iserve_map_deploy.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./logs/monitor:/iserve_ws/logs/monitor:rw
 
     command:
       - bash
@@ -61,26 +73,12 @@ services:
         echo "Auto-save: ON | Publish: OFF"
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
-          params_file:=/iserve_ws/confi./config/iserve_map_deploy.yaml &
+          params_file:=/iserve_ws/config/iserve_map_deploy.yaml &
         MAP_PID=$!
         sleep 2
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
+        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
+        python3 /iserve_ws/scripts/nav_monitor.py &
         wait $MAP_PID $FG_PID
-
-  # CPU/Memory monitor for nav_autonomy container
-  nav-monitor:
-    image: iserverobotics/nav-monitor:${MONITOR_IMAGE_TAG:-latest}
-    container_name: nav_monitor
-    restart: unless-stopped
-
-    environment:
-      - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
-      - INTERVAL=${MONITOR_INTERVAL:-1.0}
-
-    volumes:
-      # Docker socket for container access
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Persist monitor logs
-      - ./logs/monitor:/logs

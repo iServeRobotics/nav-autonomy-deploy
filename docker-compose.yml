@@ -94,23 +94,3 @@ services:
           ros2 run rviz2 rviz2 -d /ros2_ws/src/route_planner/far_planner/rviz/default.rviz &
         fi
         wait $$NAV_PID
-
-  # CPU/Memory monitor for nav_autonomy
-  # Disable with: ENABLE_MONITOR=false in .env or docker-compose up nav_autonomy
-  nav-monitor:
-    image: iserverobotics/nav-monitor:${MONITOR_IMAGE_TAG:-latest}
-    container_name: nav_monitor
-    restart: unless-stopped
-    depends_on:
-      nav_autonomy:
-        condition: service_started
-
-    environment:
-      - TARGET_CONTAINER=nav_autonomy
-      - INTERVAL=${MONITOR_INTERVAL:-1.0}
-
-    volumes:
-      # Docker socket for container access
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Persist monitor logs
-      - ./logs/monitor:/logs

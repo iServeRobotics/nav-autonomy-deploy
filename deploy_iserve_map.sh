@@ -33,28 +33,20 @@ case "$DISTRO" in
         exit 1 ;;
 esac
 
-# Pull images if not available locally
+# Pull image if not available locally
 IMAGE="iserverobotics/iserve_map:${DISTRO}"
-MONITOR_IMAGE="iserverobotics/nav-monitor:${MONITOR_IMAGE_TAG:-latest}"
 
 if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; then
     echo -e "${YELLOW}Pulling ${IMAGE}...${NC}"
     docker pull "$IMAGE"
 fi
 
-if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${MONITOR_IMAGE}$"; then
-    echo -e "${YELLOW}Pulling ${MONITOR_IMAGE}...${NC}"
-    docker pull "$MONITOR_IMAGE" || echo -e "${YELLOW}Monitor image not available, continuing without it${NC}"
-fi
-
 mkdir -p maps logs/monitor
 
 echo -e "${GREEN}================================================${NC}"
-echo -e "${GREEN}Deploying iServe Map + Monitor${NC}"
+echo -e "${GREEN}Deploying iServe Map (with nav_autonomy monitor)${NC}"
 echo -e "${GREEN}ROS Distribution: ${DISTRO}${NC}"
 echo -e "${GREEN}ROS Domain ID:    ${ROS_DOMAIN_ID:-42}${NC}"
-echo -e "${GREEN}Monitor Target:   ${TARGET_CONTAINER:-nav_autonomy}${NC}"
-echo -e "${GREEN}Monitor Interval: ${MONITOR_INTERVAL:-1.0}s${NC}"
 echo -e "${GREEN}Publish map:      OFF${NC}"
 echo -e "${GREEN}Auto-save:        every 10s${NC}"
 echo -e "${GREEN}================================================${NC}"
