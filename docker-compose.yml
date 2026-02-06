@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   nav_autonomy:
-    image: iserverobotics/nav_autonomy:${IMAGE_TAG:-latest}
+    image: iserverobotics/nav_autonomy:${IMAGE_TAG:-jazzy}
     container_name: nav_autonomy
 
     # Shared memory for ROS 2 FastDDS
@@ -41,6 +41,9 @@ services:
       - ENABLE_WIFI_BUFFER=${ENABLE_WIFI_BUFFER:-false}
       - USE_RVIZ=${USE_RVIZ:-false}
       - MAP_PATH=${MAP_PATH:-}
+      - USE_UNITREE=${USE_UNITREE:-false}                                                                                             
+      - UNITREE_IP=${UNITREE_IP:-192.168.12.1}                                                                                        
+      - UNITREE_CONN=${UNITREE_CONN:-LocalAP} 
 
     volumes:
       # X11 for GUI (RViz)
@@ -75,6 +78,15 @@ services:
         ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true &
         NAV_PID=$$!
         sleep 2
+        # Launch Unitree WebRTC control if enabled                                                                                    
+        if [ "$USE_UNITREE" = "true" ]; then                                                                                          
+          echo "Starting Unitree WebRTC control (IP: $UNITREE_IP, Method: $UNITREE_CONN)..."                                          
+          ros2 launch unitree_webrtc_ros unitree_control.launch.py robot_ip:=$UNITREE_IP connection_method:=$UNITREE_CONN &           
+        fi
+        # Start twist relay for Foxglove Teleop                                                                                       
+        python3 /usr/local/bin/twist_relay.py &                                                                                       
+        # Start goal autonomy relay (enables autonomy when goal_pose received)                                                        
+        python3 /usr/local/bin/goal_autonomy_relay.py &
         echo "Starting Foxglove Bridge on port 8765..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 &
         if [ "$$USE_RVIZ" = "true" ]; then
