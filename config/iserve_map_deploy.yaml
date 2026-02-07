@@ -1,0 +1,48 @@
+map_builder:
+  ros__parameters:
+    voxel_resolution: 0.05
+    max_points: 5000000
+    publish_map: false
+    save_directory: /iserve_ws/maps
+    downsample_interval: 5.0
+    auto_save_interval: 10.0        # seconds, 0 to disable
+    odom_topic: /state_estimation
+    odom_grid_resolution: 0.5       # meters, spatial dedup grid cell size
+    odom_yaw_resolution: 0.436      # radians (~25 deg), heading dedup bin size
+
+map_optimizer:
+  ros__parameters:
+    weight_coverage: 0.4
+    weight_recency: 0.3
+    weight_point_count: 0.3
+
+map_switcher:
+  ros__parameters:
+    slam_method: auto
+    relocalize_service: /localizer/relocalize
+    recommended_map_topic: /iserve_map/recommended_map
+
+pose_repeater:
+  ros__parameters:
+    save_directory: /iserve_ws/maps
+    goal_pose_topic: /goal_pose
+    reach_goal_topic: /far_reach_goal_status
+    odom_topic: /state_estimation
+    odom_log_rate: 20.0                    # Hz, 0 to disable
+    repeat_count: 1                        # 0 = infinite, N = N loops
+
+icp_session:
+  ros__parameters:
+    merge_maps_directory: /iserve_ws/maps   # default directory for merge_maps service
+    navigation_maps_prefix: /ros2_ws/maps  # path prefix in navigation container
+
+screen_display:
+  ros__parameters:
+    screen_width: 0                        # 0 = auto-detect via X11
+    screen_height: 0
+    scale: 100.0                           # meters to pixels
+    origin_x: 0.0                          # world X offset (meters)
+    origin_y: 0.0                          # world Y offset (meters)
+    goal_pose_topic: /goal_pose
+    arrow_length: 50.0                     # pixels
+    background_color: 0                    # 0=black, 255=white
