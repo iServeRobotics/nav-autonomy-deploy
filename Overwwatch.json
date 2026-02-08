@@ -1,0 +1,431 @@
+{
+  "_watermark": {
+    "creator": "DIMOS Navigation",
+    "author": "bona",
+    "organization": "iServe Robotics",
+    "version": "1.0",
+    "timestamp": "2026-01-17",
+    "signature": "dimos-nav-overwatch-layout"
+  },
+  "configById": {
+    "3D!main": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 10.807201753179971,
+        "phi": 12.717448602673384,
+        "thetaOffset": 155.2099169602452,
+        "targetOffset": [
+          -1.4040927779357555,
+          0.6478390169378742,
+          4.258084280767304e-16
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.01,
+        "far": 5000
+      },
+      "followMode": "follow-none",
+      "followTf": "map",
+      "scene": {
+        "backgroundColor": "#000000",
+        "enableStats": false,
+        "syncCamera": false,
+        "transforms": {
+          "visible": true,
+          "showLabel": true,
+          "enablePreloading": true,
+          "labelSize": 0.18,
+          "axisSize": 0.25,
+          "lineWidth": 3,
+          "editable": false
+        },
+        "meshUpAxis": "z_up"
+      },
+      "transforms": {
+        "frame:vehicle": {
+          "visible": true
+        },
+        "frame:map": {
+          "visible": true
+        },
+        "frame:sensor": {
+          "visible": false
+        },
+        "frame:camera_link": {
+          "visible": false
+        },
+        "frame:camera_color_frame": {
+          "visible": false
+        },
+        "frame:camera_color_optical_frame": {
+          "visible": false
+        },
+        "frame:camera_depth_frame": {
+          "visible": false
+        },
+        "frame:camera_depth_optical_frame": {
+          "visible": false
+        },
+        "frame:sensor_at_scan": {
+          "visible": false
+        },
+        "frame:icp_aligned": {
+          "visible": true
+        }
+      },
+      "topics": {
+        "/registered_scan": {
+          "visible": false,
+          "colorField": "z",
+          "colorMode": "colormap",
+          "flatColor": "#ffffff",
+          "pointSize": 2,
+          "decayTime": 1
+        },
+        "/overall_map": {
+          "visible": false,
+          "colorField": "z",
+          "colorMode": "colormap",
+          "flatColor": "#ffffff",
+          "pointSize": 2,
+          "decayTime": 0
+        },
+        "/free_paths": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo",
+          "pointSize": 2
+        },
+        "/path": {
+          "visible": true,
+          "type": "line",
+          "lineWidth": 0.05,
+          "color": "#19ff00"
+        },
+        "/way_point": {
+          "visible": true,
+          "color": "#cc29cc"
+        },
+        "/navigation_boundary": {
+          "visible": true,
+          "color": "#00ff00",
+          "lineWidth": 0.2
+        },
+        "/goal_pose": {
+          "visible": true,
+          "color": "#ff1900",
+          "type": "arrow"
+        },
+        "/terrain_map": {
+          "visible": true,
+          "colorField": "z",
+          "colorMode": "colormap",
+          "colorMap": "turbo",
+          "pointSize": 3,
+          "flatColor": "#40e543ff",
+          "pointShape": "square"
+        },
+        "/terrain_map_ext": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "rainbow",
+          "pointSize": 4
+        },
+        "/sensor_scan": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "flat",
+          "flatColor": "#ffffff",
+          "pointSize": 2
+        },
+        "/added_obstacles": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "flat",
+          "flatColor": "#ff1900",
+          "pointSize": 3
+        },
+        "/explored_areas": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "flat",
+          "flatColor": "#00aaff",
+          "pointSize": 2
+        },
+        "/trajectory": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "rainbow",
+          "pointSize": 7
+        },
+        "/viz_graph_topic": {
+          "visible": true,
+          "namespaces": {
+            "angle_direct": {
+              "visible": false
+            },
+            "boundary_edge": {
+              "visible": false
+            },
+            "boundary_vertex": {
+              "visible": false
+            },
+            "freespace_vertex": {
+              "visible": false
+            },
+            "freespace_vgraph": {
+              "visible": true
+            },
+            "frontier_vertex": {
+              "visible": false
+            },
+            "global_vertex": {
+              "visible": false
+            },
+            "global_vgraph": {
+              "visible": false
+            },
+            "localrange_vertex": {
+              "visible": false
+            },
+            "odom_edge": {
+              "visible": false
+            },
+            "polygon_edge": {
+              "visible": true
+            },
+            "to_goal_edge": {
+              "visible": false
+            },
+            "trajectory_edge": {
+              "visible": false
+            },
+            "trajectory_vertex": {
+              "visible": false
+            },
+            "updating_vertex": {
+              "visible": false
+            },
+            "vertex_angle": {
+              "visible": false
+            },
+            "vertices_matches": {
+              "visible": false
+            },
+            "visibility_edge": {
+              "visible": false
+            }
+          }
+        },
+        "/camera/camera/aligned_depth_to_color/image_raw": {
+          "visible": false,
+          "frameLocked": true,
+          "cameraInfoTopic": "/camera/camera/aligned_depth_to_color/camera_info",
+          "distance": 1,
+          "planarProjectionFactor": 0,
+          "renderMode": "pointCloud",
+          "projectionFrameId": "vehicle",
+          "color": "#ffffff",
+          "rectifyImage": true,
+          "pointSize": 1
+        },
+        "/camera/camera/aligned_depth_to_color/image_raw/compressed": {
+          "visible": false
+        },
+        "/camera/camera/aligned_depth_to_color/image_raw/compressedDepth": {
+          "visible": false,
+          "cameraInfoTopic": "/camera/camera/aligned_depth_to_color/camera_info",
+          "projectionFrameId": "map",
+          "renderMode": "pointCloud"
+        },
+        "/camera/camera/aligned_depth_to_color/image_raw/zstd": {
+          "visible": false,
+          "cameraInfoTopic": "/camera/camera/aligned_depth_to_color/camera_info",
+          "renderMode": "pointCloud",
+          "projectionFrameId": "map"
+        },
+        "/camera/camera/depth/color/points": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo",
+          "pointSize": 1,
+          "explicitAlpha": 0.7
+        },
+        "/move_base_simple/goal": {
+          "visible": false
+        },
+        "/laser_cloud_surround": {
+          "visible": false
+        },
+        "/laser_cloud_map": {
+          "visible": false,
+          "colorMode": "colormap"
+        },
+        "/edge_points": {
+          "visible": false
+        },
+        "/realsense_depth_points": {
+          "visible": false,
+          "colorMode": "colormap"
+        },
+        "/planner_points": {
+          "visible": false
+        },
+        "/imuodom_path": {
+          "visible": false
+        },
+        "/pgo/loop_markers": {
+          "visible": false
+        },
+        "/pose_repeater/pose_markers": {
+          "visible": true
+        },
+        "/icp_session/reference_map": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        }
+      },
+      "layers": {
+        "grid": {
+          "layerId": "foxglove.Grid",
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#248f24",
+          "size": 100,
+          "divisions": 100,
+          "lineWidth": 1,
+          "frameId": "map"
+        }
+      },
+      "publish": {
+        "type": "pose",
+        "poseTopic": "/goal_pose",
+        "pointTopic": "/way_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939,
+        "frameId": "map"
+      },
+      "imageMode": {},
+      "fixedFrame": "map"
+    },
+    "Indicator!autonomy": {
+      "path": "/joy.axes[2]",
+      "style": "background",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "No Joystick",
+      "rules": [
+        {
+          "operator": "<",
+          "rawValue": "-0.1",
+          "color": "#68e24a",
+          "label": "Autonomy ON"
+        },
+        {
+          "operator": ">=",
+          "rawValue": "-0.1",
+          "color": "#eb4034",
+          "label": "Autonomy OFF"
+        }
+      ],
+      "fontSize": 36
+    },
+    "Indicator!goalreached": {
+      "path": "/goal_reached.data",
+      "style": "background",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "No Data",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "Goal Reached"
+        },
+        {
+          "operator": "=",
+          "rawValue": "false",
+          "color": "#f5f5f5",
+          "label": "Navigating"
+        }
+      ],
+      "fontSize": 36
+    },
+    "Indicator!stop": {
+      "path": "/stop.data",
+      "style": "background",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "No Data",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "0",
+          "color": "#68e24a",
+          "label": "OK"
+        },
+        {
+          "operator": "=",
+          "rawValue": "1",
+          "color": "#f5ba42",
+          "label": "Speed Stop"
+        },
+        {
+          "operator": "=",
+          "rawValue": "2",
+          "color": "#eb4034",
+          "label": "Full Stop"
+        }
+      ],
+      "fontSize": 36
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "first": "3D!main",
+    "second": {
+      "first": "Indicator!autonomy",
+      "second": {
+        "first": "Indicator!goalreached",
+        "second": "Indicator!stop",
+        "direction": "row",
+        "splitPercentage": 47.81659388646288
+      },
+      "direction": "row",
+      "splitPercentage": 29.53846153846154
+    },
+    "direction": "column",
+    "splitPercentage": 86.70684092905155
+  }
+}
