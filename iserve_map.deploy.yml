@@ -15,12 +15,17 @@ services:
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
       - OUTPUT_DIR=/iserve_ws/logs/monitor
       - INTERVAL=${MONITOR_INTERVAL:-1.0}
+      - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
+      - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
-      - ./config/iserve_map_deploy.yaml:/iserve_ws/config/iserve_map_deploy.yaml:ro
+      # Docker socket for nav_autonomy monitoring and log analysis
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Persist CPU/memory monitor logs
       - ./logs/monitor:/iserve_ws/logs/monitor:rw
+      # Persist log analyzer output
+      - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
 
     command:
       - bash
@@ -39,6 +44,8 @@ services:
         FG_PID=$!
         echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
         python3 /iserve_ws/scripts/nav_monitor.py &
+        echo "Starting nav_autonomy log analyzer (target: $TARGET_CONTAINER)..."
+        python3 /iserve_ws/scripts/log_analyzer.py &
         wait $MAP_PID $FG_PID
 
   iserve_map_jazzy:
@@ -57,12 +64,17 @@ services:
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
       - OUTPUT_DIR=/iserve_ws/logs/monitor
       - INTERVAL=${MONITOR_INTERVAL:-1.0}
+      - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
+      - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
-      - ./config/iserve_map_deploy.yaml:/iserve_ws/config/iserve_map_deploy.yaml:ro
+      # Docker socket for nav_autonomy monitoring and log analysis
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Persist CPU/memory monitor logs
       - ./logs/monitor:/iserve_ws/logs/monitor:rw
+      # Persist log analyzer output
+      - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
 
     command:
       - bash
@@ -81,4 +93,6 @@ services:
         FG_PID=$!
         echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
         python3 /iserve_ws/scripts/nav_monitor.py &
+        echo "Starting nav_autonomy log analyzer (target: $TARGET_CONTAINER)..."
+        python3 /iserve_ws/scripts/log_analyzer.py &
         wait $MAP_PID $FG_PID

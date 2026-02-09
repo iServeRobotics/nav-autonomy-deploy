@@ -41,12 +41,18 @@ if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; t
     docker pull "$IMAGE"
 fi
 
-mkdir -p maps logs/monitor
+# nav-monitor and log-analyzer are now built into the iserve_map image
+# No separate monitor image needed
+
+mkdir -p maps logs/monitor logs/analyzer
 
 echo -e "${GREEN}================================================${NC}"
-echo -e "${GREEN}Deploying iServe Map (with nav_autonomy monitor)${NC}"
+echo -e "${GREEN}Deploying iServe Map + Monitor + Log Analyzer${NC}"
 echo -e "${GREEN}ROS Distribution: ${DISTRO}${NC}"
 echo -e "${GREEN}ROS Domain ID:    ${ROS_DOMAIN_ID:-42}${NC}"
+echo -e "${GREEN}Monitor Target:   ${TARGET_CONTAINER:-nav_autonomy}${NC}"
+echo -e "${GREEN}Monitor Interval: ${MONITOR_INTERVAL:-1.0}s${NC}"
+echo -e "${GREEN}Log Analyzer:     ON (summary every ${SUMMARY_INTERVAL:-60}s)${NC}"
 echo -e "${GREEN}Publish map:      OFF${NC}"
 echo -e "${GREEN}Auto-save:        every 10s${NC}"
 echo -e "${GREEN}================================================${NC}"
@@ -60,5 +66,5 @@ echo -e "Clear poses:  ${YELLOW}ros2 service call /pose_repeater/clear_poses std
 echo -e "Set loops:    ${YELLOW}ros2 param set /pose_repeater repeat_count 0${NC}  (0=infinite, N=N loops)"
 echo ""
 
-# Start iserve_map with the selected profile + nav-monitor (no profile = always starts)
+# Start iserve_map with the selected profile
 docker compose -f iserve_map.deploy.yml --profile "$DISTRO" up
