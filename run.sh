@@ -56,7 +56,7 @@ fi
 docker rm ${CONTAINER_NAME} 2>/dev/null || true
 
 # Image
-IMAGE="iserverobotics/nav_autonomy:${DISTRO}"
+IMAGE="iserverobotics/nav_autonomy:${DISTRO}-omakase"
 
 # Pull if not available
 if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; then
@@ -72,6 +72,7 @@ echo -e "${GREEN}SLAM Method:      FASTLIO2${NC}"
 echo -e "${GREEN}Planner:          Route Planner${NC}"
 echo -e "${GREEN}Lidar IP:         ${LIDAR_IP:-192.168.1.116}${NC}"
 echo -e "${GREEN}Use Unitree:      ${USE_UNITREE:-false}${NC}"
+echo -e "${GREEN}ROS Bridge:       port ${ROS_BRIDGE_PORT:-9090} (TCP API)${NC}"
 echo -e "${GREEN}================================================${NC}"
 
 # Build docker run command
@@ -113,6 +114,9 @@ DOCKER_OPTS+=(
     -e USE_UNITREE=${USE_UNITREE:-false}
     -e UNITREE_IP=${UNITREE_IP:-192.168.12.1}
     -e UNITREE_CONN=${UNITREE_CONN:-LocalAP}
+    -e ROS_BRIDGE_HOST=${ROS_BRIDGE_HOST:-0.0.0.0}
+    -e ROS_BRIDGE_PORT=${ROS_BRIDGE_PORT:-9090}
+    -e ROS_BRIDGE_AUTONOMY_SPEED=${ROS_BRIDGE_AUTONOMY_SPEED:-1.0}
 )
 
 # Volumes
@@ -152,7 +156,14 @@ DOCKER_OPTS+=(
 # Command to run inside container
 CONTAINER_CMD='
 echo "Starting real robot system with route planner..."
-ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true &
+echo "  ROS Bridge Server: port ${ROS_BRIDGE_PORT:-9090} (TCP API)"
+echo "  Foxglove Bridge:   port 8765 (WebSocket)"
+ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py \
+    use_fastlio2:=true \
+    enable_bridge:=true \
+    bridge_host:=${ROS_BRIDGE_HOST:-0.0.0.0} \
+    bridge_port:=${ROS_BRIDGE_PORT:-9090} \
+    bridge_autonomy_speed:=${ROS_BRIDGE_AUTONOMY_SPEED:-1.0} &
 NAV_PID=$!
 sleep 2
 
