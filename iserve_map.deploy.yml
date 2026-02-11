@@ -7,6 +7,7 @@ services:
 
     shm_size: '2gb'
     network_mode: host
+    privileged: true
 
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
@@ -17,6 +18,10 @@ services:
       - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
+      - ENABLE_CAMERA=${ENABLE_CAMERA:-true}
+      - CAMERA_FPS=${CAMERA_FPS:-6}
+      - CAMERA_WIDTH=${CAMERA_WIDTH:-640}
+      - CAMERA_HEIGHT=${CAMERA_HEIGHT:-480}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
@@ -27,6 +32,9 @@ services:
       # Persist log analyzer output
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
 
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+
     command:
       - bash
       - -c
@@ -34,11 +42,23 @@ services:
         echo "=== iServe Map (Humble) ==="
         echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
         echo "Auto-save: ON | Publish: OFF"
+        echo "Camera: ${ENABLE_CAMERA:-true} (${CAMERA_WIDTH:-640}x${CAMERA_HEIGHT:-480}@${CAMERA_FPS:-6}fps)"
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
           params_file:=/iserve_ws/config/iserve_map_deploy.yaml &
         MAP_PID=$!
         sleep 2
+        if [ "${ENABLE_CAMERA:-true}" = "true" ]; then
+          echo "Starting RealSense camera..."
+          ros2 launch realsense2_camera rs_launch.py \
+            enable_color:=true \
+            enable_depth:=false \
+            enable_infra1:=false \
+            enable_infra2:=false \
+            pointcloud.enable:=false \
+            align_depth.enable:=false \
+            rgb_camera.color_profile:=${CAMERA_WIDTH:-640},${CAMERA_HEIGHT:-480},${CAMERA_FPS:-6} &
+        fi
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
@@ -56,6 +76,7 @@ services:
 
     shm_size: '2gb'
     network_mode: host
+    privileged: true
 
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
@@ -66,6 +87,10 @@ services:
       - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
+      - ENABLE_CAMERA=${ENABLE_CAMERA:-true}
+      - CAMERA_FPS=${CAMERA_FPS:-6}
+      - CAMERA_WIDTH=${CAMERA_WIDTH:-640}
+      - CAMERA_HEIGHT=${CAMERA_HEIGHT:-480}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
@@ -76,6 +101,9 @@ services:
       # Persist log analyzer output
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
 
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+
     command:
       - bash
       - -c
@@ -83,11 +111,23 @@ services:
         echo "=== iServe Map (Jazzy) ==="
         echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
         echo "Auto-save: ON | Publish: OFF"
+        echo "Camera: ${ENABLE_CAMERA:-true} (${CAMERA_WIDTH:-640}x${CAMERA_HEIGHT:-480}@${CAMERA_FPS:-6}fps)"
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
           params_file:=/iserve_ws/config/iserve_map_deploy.yaml &
         MAP_PID=$!
         sleep 2
+        if [ "${ENABLE_CAMERA:-true}" = "true" ]; then
+          echo "Starting RealSense camera..."
+          ros2 launch realsense2_camera rs_launch.py \
+            enable_color:=true \
+            enable_depth:=false \
+            enable_infra1:=false \
+            enable_infra2:=false \
+            pointcloud.enable:=false \
+            align_depth.enable:=false \
+            rgb_camera.color_profile:=${CAMERA_WIDTH:-640},${CAMERA_HEIGHT:-480},${CAMERA_FPS:-6} &
+        fi
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
