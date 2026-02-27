@@ -14,7 +14,7 @@ set -a
 [ -f .env ] && source .env
 set +a
 
-DISTRO="${1:-humble}"
+DISTRO="${1:-jazzy}"
 
 case "$DISTRO" in
     humble|jazzy) ;;
