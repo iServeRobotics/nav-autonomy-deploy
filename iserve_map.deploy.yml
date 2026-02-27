@@ -48,10 +48,10 @@ services:
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
-        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
-        python3 /iserve_ws/scripts/nav_monitor.py &
-        echo "Starting nav_autonomy log analyzer (target: $TARGET_CONTAINER)..."
+        echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
+        echo "Starting cloud sender..."
+        python3 /iserve_ws/scripts/cloud_sender.py &
         wait $MAP_PID $FG_PID
 
   iserve_map_jazzy:
@@ -103,8 +103,8 @@ services:
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
-        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
-        python3 /iserve_ws/scripts/nav_monitor.py &
-        echo "Starting nav_autonomy log analyzer (target: $TARGET_CONTAINER)..."
+        echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
+        echo "Starting cloud sender..."
+        python3 /iserve_ws/scripts/cloud_sender.py &
         wait $MAP_PID $FG_PID
