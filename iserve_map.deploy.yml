@@ -13,18 +13,24 @@ services:
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
-      - OUTPUT_DIR=/iserve_ws/logs/monitor
-      - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
+      # Cloud sender configuration
+      - CLOUD_API_URL=${CLOUD_API_URL:-https://omakase-robotics.com}
+      - CLOUD_API_KEY=${CLOUD_API_KEY}
+      - CLOUD_ROBOT_ID=${CLOUD_ROBOT_ID:-}
+      - CLOUD_ROBOT_NAME=${CLOUD_ROBOT_NAME:-iserve-robot}
+      - CLOUD_VENDOR=${CLOUD_VENDOR:-iserve}
+      - CLOUD_ZONE=${CLOUD_ZONE:-default}
+      - CLOUD_TASK_ID=${CLOUD_TASK_ID:-}
+      - TELEMETRY_SEND_INTERVAL=${TELEMETRY_SEND_INTERVAL:-1.0}
+      - EVENT_SEND_INTERVAL=${EVENT_SEND_INTERVAL:-5.0}
+      - SYSTEM_STATS_INTERVAL=${SYSTEM_STATS_INTERVAL:-1.0}
+      - PCD_UPLOAD_DIR=${PCD_UPLOAD_DIR:-/iserve_ws/maps/current_map}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
-      # Docker socket for nav_autonomy monitoring and log analysis
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Persist CPU/memory monitor logs
-      - ./logs/monitor:/iserve_ws/logs/monitor:rw
-      # Persist log analyzer output
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
 
     command:
@@ -62,18 +68,24 @@ services:
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
-      - OUTPUT_DIR=/iserve_ws/logs/monitor
-      - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
+      # Cloud sender configuration
+      - CLOUD_API_URL=${CLOUD_API_URL:-https://omakase-robotics.com}
+      - CLOUD_API_KEY=${CLOUD_API_KEY}
+      - CLOUD_ROBOT_ID=${CLOUD_ROBOT_ID:-}
+      - CLOUD_ROBOT_NAME=${CLOUD_ROBOT_NAME:-iserve-robot}
+      - CLOUD_VENDOR=${CLOUD_VENDOR:-iserve}
+      - CLOUD_ZONE=${CLOUD_ZONE:-default}
+      - CLOUD_TASK_ID=${CLOUD_TASK_ID:-}
+      - TELEMETRY_SEND_INTERVAL=${TELEMETRY_SEND_INTERVAL:-1.0}
+      - EVENT_SEND_INTERVAL=${EVENT_SEND_INTERVAL:-5.0}
+      - SYSTEM_STATS_INTERVAL=${SYSTEM_STATS_INTERVAL:-1.0}
+      - PCD_UPLOAD_DIR=${PCD_UPLOAD_DIR:-/iserve_ws/maps/current_map}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
-      # Docker socket for nav_autonomy monitoring and log analysis
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Persist CPU/memory monitor logs
-      - ./logs/monitor:/iserve_ws/logs/monitor:rw
-      # Persist log analyzer output
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
 
     command:
