@@ -44,6 +44,7 @@ services:
       - USE_UNITREE=${USE_UNITREE:-false}
       - UNITREE_IP=${UNITREE_IP:-192.168.12.1}
       - UNITREE_CONN=${UNITREE_CONN:-LocalAP}
+      - AUTONOMY_SPEED=${AUTONOMY_SPEED:-1.0}
 
     volumes:
       # X11 for GUI (RViz)
@@ -75,7 +76,7 @@ services:
       - -c
       - |
         echo "Starting real robot system with route planner..."
-        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true &
+        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true bridge_autonomy_speed:=$${AUTONOMY_SPEED:-1.0} &
         NAV_PID=$$!
         sleep 2
         # Launch Unitree WebRTC control if enabled
