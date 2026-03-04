@@ -43,32 +43,27 @@ This repository provides deployment configurations and scripts to run the iServe
 
 ### 1. Configure Hardware
 
-Copy the environment template and customize for your hardware:
-
-```bash
-cp env.txt .env
-```
-
-Edit `.env` with your hardware details:
+Edit the `.env` file with your hardware details:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ROS_DOMAIN_ID` | ROS 2 domain for multi-robot isolation | `42` |
-| `ROBOT_CONFIG_PATH` | Robot model config path | `unitree/unitree_go2` |
-| `LIDAR_INTERFACE` | Network interface for LiDAR | `enP8p1s0` |
+| `ROBOT_CONFIG_PATH` | Robot model config path | `unitree/unitree_g1` |
+| `ROBOT_IP` | Robot IP address (check your network) | `192.168.12.1` |
+| `LIDAR_INTERFACE` | Network interface for LiDAR (check with `ip addr`) | `enP8p1s0` |
 | `LIDAR_IP` | LiDAR device IP | `192.168.1.1xx` |
 | `LIDAR_COMPUTER_IP` | Processing computer IP | `192.168.1.xxx` |
-| `USE_UNITREE` | Enable Unitree robot control | `false` |
+| `USE_UNITREE` | Enable Unitree robot control | `true` |
 | `UNITREE_IP` | Unitree robot IP | `192.168.12.1` |
 | `DOCKER_RUNTIME` | Container runtime (`runc` or `nvidia`) | `runc` |
 | `MAP_PATH` | Pre-built map for localization (empty = mapping mode) | `` |
+
+> **Important:** Double-check `ROBOT_IP` and `LIDAR_INTERFACE` match your actual hardware setup before starting.
 
 ### 2. Start Navigation Stack
 
 ```bash
 docker compose up -d                        # Default: jazzy, detached
-IMAGE_TAG=humble docker compose up -d       # Use ROS 2 Humble
-docker compose logs -f                      # View logs
 docker compose down                         # Stop
 ```
 
@@ -78,8 +73,7 @@ If Docker Compose is not available, use the standalone script:
 
 ```bash
 ./run.sh              # Default: jazzy
-./run.sh --humble     # Use ROS 2 Humble
-./run.sh --jazzy -d   # Jazzy, detached mode
+./run.sh -d           # Detached mode
 ```
 
 > **Note (Jetson G1):** To install the Docker Compose plugin without updating JetPack:
@@ -105,8 +99,7 @@ To send a goal pose, click the **Publish** button ( ⬆ ) on the right toolbar o
 .
 ├── docker-compose.yml          # Nav autonomy container orchestration
 ├── run.sh                      # Launch script for nav_autonomy
-├── .env                        # Hardware configuration (from env.txt)
-├── env.txt                     # Environment variable template
+├── .env                        # Hardware configuration
 ├── Overwwatch.json             # Foxglove visualization layout
 ├── maps/                       # Stored map PCD files
 └── logs/                       # Runtime logs
