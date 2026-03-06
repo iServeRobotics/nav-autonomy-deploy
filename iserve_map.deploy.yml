@@ -13,6 +13,8 @@ services:
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
+      - OUTPUT_DIR=/iserve_ws/logs/monitor
+      - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
       # Cloud sender configuration
@@ -32,6 +34,7 @@ services:
       - ./maps:/iserve_ws/maps:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
+      - ./logs/monitor:/iserve_ws/logs/monitor:rw
 
     command:
       - bash
@@ -48,6 +51,8 @@ services:
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
+        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
+        python3 /iserve_ws/scripts/nav_monitor.py &
         echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
         echo "Starting cloud sender..."
@@ -68,6 +73,8 @@ services:
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
+      - OUTPUT_DIR=/iserve_ws/logs/monitor
+      - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
       # Cloud sender configuration
@@ -87,6 +94,7 @@ services:
       - ./maps:/iserve_ws/maps:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
+      - ./logs/monitor:/iserve_ws/logs/monitor:rw
 
     command:
       - bash
@@ -103,6 +111,8 @@ services:
         echo "Starting Foxglove Bridge on port 8766..."
         ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
         FG_PID=$!
+        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
+        python3 /iserve_ws/scripts/nav_monitor.py &
         echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
         echo "Starting cloud sender..."
