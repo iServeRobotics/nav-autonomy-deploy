@@ -169,7 +169,7 @@ python3 /usr/local/bin/twist_relay.py &
 python3 /usr/local/bin/goal_autonomy_relay.py &
 
 echo "Starting Foxglove Bridge on port 8765..."
-ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 &
+ros2 run foxglove_bridge foxglove_bridge --ros-args -p port:=8765 -p send_buffer_limit:=100000000 -p max_qos_depth:=1 &
 
 if [ "$USE_RVIZ" = "true" ]; then
     echo "Starting RViz2..."

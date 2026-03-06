@@ -1,4 +1,14 @@
 #!/bin/bash
+# =============================================================================
+# iServe Map - Deployment Script
+# Copyright (c) 2024-2026 iServe Robotics. All rights reserved.
+#
+# Licensed under CC BY-NC 4.0 (Non-Commercial Use Only).
+# Commercial use requires a separate license from iServe Robotics.
+# See LICENSE-ISERVE-MAP or https://creativecommons.org/licenses/by-nc/4.0/
+#
+# Contact: licensing@iserverobotics.com
+# =============================================================================
 set -e
 
 GREEN='\033[0;32m'
@@ -8,6 +18,35 @@ NC='\033[0m'
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
+
+# --- License acceptance gate ---
+LICENSE_ACCEPTED_FILE="$SCRIPT_DIR/.iserve_license_accepted"
+if [ ! -f "$LICENSE_ACCEPTED_FILE" ]; then
+    echo ""
+    echo -e "${YELLOW}============================================================${NC}"
+    echo -e "${YELLOW}  iServe Map - License Agreement${NC}"
+    echo -e "${YELLOW}============================================================${NC}"
+    echo ""
+    echo "  iServe Map is licensed under CC BY-NC 4.0."
+    echo "  Free for evaluation, research, and non-commercial use."
+    echo ""
+    echo -e "  ${RED}Commercial use requires a separate license.${NC}"
+    echo "  Contact: info@iserve.ai"
+    echo ""
+    echo "  Full terms: https://creativecommons.org/licenses/by-nc/4.0/"
+    echo "  See also:   LICENSE-ISERVE-MAP"
+    echo ""
+    echo -e "${YELLOW}============================================================${NC}"
+    echo ""
+    read -rp "Do you accept the license terms? [y/N] " ACCEPT
+    if [[ "$ACCEPT" != "y" && "$ACCEPT" != "Y" ]]; then
+        echo -e "${RED}License not accepted. Exiting.${NC}"
+        exit 1
+    fi
+    date -Iseconds > "$LICENSE_ACCEPTED_FILE"
+    echo -e "${GREEN}License accepted.${NC}"
+    echo ""
+fi
 
 # Source .env for display
 set -a

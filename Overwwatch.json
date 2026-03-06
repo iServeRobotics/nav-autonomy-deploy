@@ -11,13 +11,13 @@
     "3D!main": {
       "cameraState": {
         "perspective": true,
-        "distance": 10.807201753179971,
-        "phi": 12.717448602673384,
-        "thetaOffset": 155.2099169602452,
+        "distance": 8.36240670430869,
+        "phi": 31.94620172917393,
+        "thetaOffset": -105.70629867969565,
         "targetOffset": [
-          -1.4040927779357555,
-          0.6478390169378742,
-          4.258084280767304e-16
+          -1.0939514045761196,
+          -0.10017085643301656,
+          5.755215548637054e-16
         ],
         "target": [
           0,
@@ -81,6 +81,12 @@
         },
         "frame:icp_aligned": {
           "visible": true
+        },
+        "frame:": {
+          "visible": false
+        },
+        "frame:lidar": {
+          "visible": false
         }
       },
       "topics": {
@@ -101,14 +107,14 @@
           "decayTime": 0
         },
         "/free_paths": {
-          "visible": true,
+          "visible": false,
           "colorField": "intensity",
           "colorMode": "colormap",
           "colorMap": "turbo",
           "pointSize": 2
         },
         "/path": {
-          "visible": true,
+          "visible": false,
           "type": "line",
           "lineWidth": 0.05,
           "color": "#19ff00"
@@ -118,7 +124,7 @@
           "color": "#cc29cc"
         },
         "/navigation_boundary": {
-          "visible": true,
+          "visible": false,
           "color": "#00ff00",
           "lineWidth": 0.2
         },
@@ -128,7 +134,7 @@
           "type": "arrow"
         },
         "/terrain_map": {
-          "visible": true,
+          "visible": false,
           "colorField": "z",
           "colorMode": "colormap",
           "colorMap": "turbo",
@@ -172,7 +178,7 @@
           "pointSize": 7
         },
         "/viz_graph_topic": {
-          "visible": true,
+          "visible": false,
           "namespaces": {
             "angle_direct": {
               "visible": false
@@ -299,6 +305,27 @@
           "colorField": "intensity",
           "colorMode": "colormap",
           "colorMap": "turbo"
+        },
+        "/viz_grid_map_topic": {
+          "visible": false
+        },
+        "/viz_contour_topic": {
+          "visible": false
+        },
+        "/viz_node_topic": {
+          "visible": false
+        },
+        "/viz_path_topic": {
+          "visible": false
+        },
+        "/viz_viewpoint_extend_topic": {
+          "visible": false
+        },
+        "/viz_poly_topic": {
+          "visible": true
+        },
+        "/screen_display/draw_arrow": {
+          "visible": false
         }
       },
       "layers": {

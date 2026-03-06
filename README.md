@@ -63,7 +63,7 @@ Edit the `.env` file with your hardware details:
 ### 2. Start Navigation Stack
 
 ```bash
-docker compose up -d                        # Default: jazzy, detached
+docker compose up -d                        # Start (detached)
 docker compose down                         # Stop
 ```
 
@@ -72,7 +72,7 @@ docker compose down                         # Stop
 If Docker Compose is not available, use the standalone script:
 
 ```bash
-./run.sh              # Default: jazzy
+./run.sh              # Start
 ./run.sh -d           # Detached mode
 ```
 
@@ -98,11 +98,26 @@ To send a goal pose, click the **Publish** button ( ⬆ ) on the right toolbar o
 ```
 .
 ├── docker-compose.yml          # Nav autonomy container orchestration
+├── iserve_map.deploy.yml       # iServe Map container orchestration
 ├── run.sh                      # Launch script for nav_autonomy
+├── deploy_iserve_map.sh        # Launch script for iServe Map
 ├── .env                        # Hardware configuration
 ├── Overwwatch.json             # Foxglove visualization layout
 ├── maps/                       # Stored map PCD files
-└── logs/                       # Runtime logs
+├── logs/                       # Runtime logs
+├── LICENSE                     # BSD-3-Clause (nav_autonomy deploy configs)
+└── LICENSE-ISERVE-MAP          # CC BY-NC 4.0 (iServe Map)
 ```
 
+## License
 
+This repository contains components under different licenses:
+
+| Component | License | Files |
+|-----------|---------|-------|
+| Nav autonomy (deploy configs, scripts) | [BSD-3-Clause](LICENSE) | `docker-compose.yml`, `run.sh`, `.env` |
+| iServe Map (image, deploy script) | [CC BY-NC 4.0](LICENSE-ISERVE-MAP) | `iserve_map.deploy.yml`, `deploy_iserve_map.sh` |
+
+The nav_autonomy image is derived from the [CMU autonomy stack](https://github.com/jizhang-cmu/autonomy_stack_mecanum_wheel_platform) via [Vector Navigation Stack](https://github.com/VectorRobotics/vector_navigation_stack).
+
+For commercial use of iServe Map, contact: info@iserve.ai
