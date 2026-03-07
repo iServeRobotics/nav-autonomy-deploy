@@ -93,6 +93,26 @@ To send a goal pose, click the **Publish** button ( ⬆ ) on the right toolbar o
 
 ![Pick a goal pose in Foxglove](assets/pick_goal.png)
 
+## Updating Docker Images
+
+The deployment uses pre-built images from Docker Hub. To pull the latest version:
+
+```bash
+docker compose pull
+```
+
+Then restart the container to use the updated image:
+
+```bash
+docker compose down && docker compose up -d
+```
+
+| Image | Tag | Source |
+|-------|-----|--------|
+| `iserverobotics/nav_autonomy` | `jazzy` | [nav_autonomy](https://github.com/iServeRobotics/nav_autonomy) |
+
+`docker compose pull` defaults to the `jazzy` tag.
+
 ## Project Structure
 
 ```
