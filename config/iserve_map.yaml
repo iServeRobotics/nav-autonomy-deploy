@@ -1,0 +1,79 @@
+map_builder:
+  ros__parameters:
+    voxel_resolution: 0.05
+    max_points: 5000000
+    publish_map: true
+    save_directory: /iserve_ws/maps
+    downsample_interval: 5.0
+    auto_save_interval: 10.0        # seconds, 0 to disable
+    odom_topic: /state_estimation
+    odom_grid_resolution: 0.5       # meters, spatial dedup grid cell size
+    odom_yaw_resolution: 0.436      # radians (~25 deg), heading dedup bin size
+    auto_mapping: false              # copy PCD+waypoints to current_best_map when empty
+
+map_optimizer:
+  ros__parameters:
+    weight_coverage: 0.4
+    weight_recency: 0.3
+    weight_point_count: 0.3
+
+map_switcher:
+  ros__parameters:
+    slam_method: auto
+    relocalize_service: /localizer/relocalize
+    recommended_map_topic: /iserve_map/recommended_map
+
+pose_repeater:
+  ros__parameters:
+    save_directory: /iserve_ws/maps
+    goal_pose_topic: /goal_pose
+    reach_goal_topic: /far_reach_goal_status
+    odom_topic: /state_estimation
+    odom_log_rate: 20.0                    # Hz, 0 to disable
+    repeat_count: 2                        # 0 = infinite, N = N loops
+    auto_traverse: false                   # set true for traverse mode
+    goal_wait_sec: 1.0                     # seconds to wait after reaching a goal before next
+
+screen_display:
+  ros__parameters:
+    screen_width: 0                        # 0 = auto-detect via X11
+    screen_height: 0
+    scale: 100.0                           # meters to pixels
+    origin_x: 0.0                          # world X offset (meters)
+    origin_y: 0.0                          # world Y offset (meters)
+    goal_pose_topic: /goal_pose
+    arrow_length: 50.0                     # pixels
+    background_color: 0                    # 0=black, 255=white
+
+lidar_health:
+  ros__parameters:
+    lidar_topic: /registered_scan
+    imu_topic: /imu/data
+    check_interval: 1.0              # seconds between Hz checks (= window length)
+    lidar_min_hz: 9.0                # warn if lidar below this Hz
+    imu_min_hz: 190.0                # warn if IMU below this Hz
+    stale_timeout: 5.0               # seconds with 0 msgs = ERROR
+
+icp_session:
+  ros__parameters:
+    default_num_frames: 5
+    accumulation_voxel_resolution: 0.05
+    broadcast_tf: true
+    map_frame: "map"
+    scan_frame: "icp_aligned"
+    allow_preempt: true
+    rough_scan_resolution: 0.25
+    rough_map_resolution: 0.25
+    rough_max_iteration: 5
+    rough_score_thresh: 0.2
+    refine_scan_resolution: 0.1
+    refine_map_resolution: 0.1
+    refine_max_iteration: 10
+    refine_score_thresh: 0.1
+    max_correspondence_distance: 1.0  # meters, ignore point pairs further than this
+    merge_maps_directory: /iserve_ws/maps   # default directory for merge_maps service
+    navigation_maps_prefix: /ros2_ws/maps  # path prefix in navigation container
+    auto_start: true
+    auto_start_pcd: /iserve_ws/maps/current_best_map/aggregated_map.pcd
+    auto_start_guess_file: ""              # text file with "x y z roll pitch yaw"; empty = identity
+    result_log_file: /iserve_ws/maps/icp_results.csv

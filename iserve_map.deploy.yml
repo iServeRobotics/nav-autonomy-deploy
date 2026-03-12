@@ -13,14 +13,10 @@ services:
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
-      - OUTPUT_DIR=/iserve_ws/logs/monitor
-      - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
-      # Cloud sender configuration
+      # Cloud sender configuration (API key and robot ID loaded from key.txt)
       - CLOUD_API_URL=${CLOUD_API_URL:-https://omakase-robotics.com}
-      - CLOUD_API_KEY=${CLOUD_API_KEY}
-      - CLOUD_ROBOT_ID=${CLOUD_ROBOT_ID:-}
       - CLOUD_ROBOT_NAME=${CLOUD_ROBOT_NAME:-iserve-robot}
       - CLOUD_VENDOR=${CLOUD_VENDOR:-iserve}
       - CLOUD_ZONE=${CLOUD_ZONE:-default}
@@ -29,13 +25,19 @@ services:
       - EVENT_SEND_INTERVAL=${EVENT_SEND_INTERVAL:-5.0}
       - SYSTEM_STATS_INTERVAL=${SYSTEM_STATS_INTERVAL:-1.0}
       - PCD_UPLOAD_DIR=${PCD_UPLOAD_DIR:-/iserve_ws/maps/current_best_map}
+      - SESSION_UPLOAD_INTERVAL=${SESSION_UPLOAD_INTERVAL:-30.0}
+      # Data recorder configuration
+      - DATA_RECORDER_IMAGE_TOPIC=${DATA_RECORDER_IMAGE_TOPIC:-/camera/color/image_raw}
+      - DATA_RECORDER_ODOM_TOPIC=${DATA_RECORDER_ODOM_TOPIC:-/state_estimation}
+      - DATA_RECORDER_SAVE_RATE=${DATA_RECORDER_SAVE_RATE:-1.0}
+      - DATA_RECORDER_ENABLED=${DATA_RECORDER_ENABLED:-false}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
+      - ./key.txt:/iserve_ws/config/key.txt:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
-      - ./logs/monitor:/iserve_ws/logs/monitor:rw
-      - ./key.txt:/iserve_ws/config/key.txt:ro
+      - ./config/iserve_map.yaml:/iserve_ws/config/iserve_map.yaml:ro
 
     command:
       - bash
@@ -46,18 +48,20 @@ services:
         echo "Auto-save: ON | Publish: OFF"
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
-          params_file:=/iserve_ws/config/iserve_map_deploy.yaml &
+          params_file:=/iserve_ws/config/iserve_map.yaml &
         MAP_PID=$!
         sleep 2
         echo "Starting Foxglove Bridge on port 8766..."
-        ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
+        ros2 run foxglove_bridge foxglove_bridge --ros-args -p port:=8766 -p send_buffer_limit:=100000000 -p max_qos_depth:=1 &
         FG_PID=$!
-        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
-        python3 /iserve_ws/scripts/nav_monitor.py &
         echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
         echo "Starting cloud sender..."
         python3 /iserve_ws/scripts/cloud_sender.py &
+        if [ "$DATA_RECORDER_ENABLED" = "true" ]; then
+          echo "Starting data recorder (image: $DATA_RECORDER_IMAGE_TOPIC, rate: ${DATA_RECORDER_SAVE_RATE}Hz)..."
+          python3 /iserve_ws/scripts/perception_recorder.py &
+        fi
         wait $MAP_PID $FG_PID
 
   iserve_map_jazzy:
@@ -74,14 +78,10 @@ services:
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
       - TARGET_CONTAINER=${TARGET_CONTAINER:-nav_autonomy}
-      - OUTPUT_DIR=/iserve_ws/logs/monitor
-      - INTERVAL=${MONITOR_INTERVAL:-1.0}
       - LOG_OUTPUT_DIR=/iserve_ws/logs/analyzer
       - SUMMARY_INTERVAL=${SUMMARY_INTERVAL:-60}
-      # Cloud sender configuration
+      # Cloud sender configuration (API key and robot ID loaded from key.txt)
       - CLOUD_API_URL=${CLOUD_API_URL:-https://omakase-robotics.com}
-      - CLOUD_API_KEY=${CLOUD_API_KEY}
-      - CLOUD_ROBOT_ID=${CLOUD_ROBOT_ID:-}
       - CLOUD_ROBOT_NAME=${CLOUD_ROBOT_NAME:-iserve-robot}
       - CLOUD_VENDOR=${CLOUD_VENDOR:-iserve}
       - CLOUD_ZONE=${CLOUD_ZONE:-default}
@@ -90,13 +90,19 @@ services:
       - EVENT_SEND_INTERVAL=${EVENT_SEND_INTERVAL:-5.0}
       - SYSTEM_STATS_INTERVAL=${SYSTEM_STATS_INTERVAL:-1.0}
       - PCD_UPLOAD_DIR=${PCD_UPLOAD_DIR:-/iserve_ws/maps/current_best_map}
+      - SESSION_UPLOAD_INTERVAL=${SESSION_UPLOAD_INTERVAL:-30.0}
+      # Data recorder configuration
+      - DATA_RECORDER_IMAGE_TOPIC=${DATA_RECORDER_IMAGE_TOPIC:-/camera/color/image_raw}
+      - DATA_RECORDER_ODOM_TOPIC=${DATA_RECORDER_ODOM_TOPIC:-/state_estimation}
+      - DATA_RECORDER_SAVE_RATE=${DATA_RECORDER_SAVE_RATE:-1.0}
+      - DATA_RECORDER_ENABLED=${DATA_RECORDER_ENABLED:-false}
 
     volumes:
       - ./maps:/iserve_ws/maps:rw
+      - ./key.txt:/iserve_ws/config/key.txt:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
-      - ./logs/monitor:/iserve_ws/logs/monitor:rw
-      - ./key.txt:/iserve_ws/config/key.txt:ro
+      - ./config/iserve_map.yaml:/iserve_ws/config/iserve_map.yaml:ro
 
     command:
       - bash
@@ -107,16 +113,18 @@ services:
         echo "Auto-save: ON | Publish: OFF"
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
-          params_file:=/iserve_ws/config/iserve_map_deploy.yaml &
+          params_file:=/iserve_ws/config/iserve_map.yaml &
         MAP_PID=$!
         sleep 2
         echo "Starting Foxglove Bridge on port 8766..."
-        ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
+        ros2 run foxglove_bridge foxglove_bridge --ros-args -p port:=8766 -p send_buffer_limit:=100000000 -p max_qos_depth:=1 &
         FG_PID=$!
-        echo "Starting nav_autonomy monitor (target: $TARGET_CONTAINER)..."
-        python3 /iserve_ws/scripts/nav_monitor.py &
         echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
         echo "Starting cloud sender..."
         python3 /iserve_ws/scripts/cloud_sender.py &
+        if [ "$DATA_RECORDER_ENABLED" = "true" ]; then
+          echo "Starting data recorder (image: $DATA_RECORDER_IMAGE_TOPIC, rate: ${DATA_RECORDER_SAVE_RATE}Hz)..."
+          python3 /iserve_ws/scripts/perception_recorder.py &
+        fi
         wait $MAP_PID $FG_PID
