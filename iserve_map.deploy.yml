@@ -35,6 +35,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
       - ./logs/monitor:/iserve_ws/logs/monitor:rw
+      - ./key.txt:/iserve_ws/config/key.txt:ro
 
     command:
       - bash
@@ -95,6 +96,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
       - ./logs/monitor:/iserve_ws/logs/monitor:rw
+      - ./key.txt:/iserve_ws/config/key.txt:ro
 
     command:
       - bash
