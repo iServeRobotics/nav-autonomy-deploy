@@ -1,6 +1,6 @@
 map_builder:
   ros__parameters:
-    voxel_resolution: 0.05
+    voxel_resolution: 0.1
     max_points: 5000000
     publish_map: true
     save_directory: /iserve_ws/maps
