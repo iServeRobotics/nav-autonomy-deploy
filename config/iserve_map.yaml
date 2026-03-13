@@ -32,6 +32,7 @@ pose_repeater:
     odom_log_rate: 20.0                    # Hz, 0 to disable
     repeat_count: 2                        # 0 = infinite, N = N loops
     auto_traverse: false                   # set true for traverse mode
+    save_poses_to_file: false              # save recorded poses to traverse_poses.txt
     goal_wait_sec: 1.0                     # seconds to wait after reaching a goal before next
 
 screen_display:
