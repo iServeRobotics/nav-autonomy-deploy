@@ -65,11 +65,11 @@ icp_session:
     rough_scan_resolution: 0.25
     rough_map_resolution: 0.25
     rough_max_iteration: 5
-    rough_score_thresh: 0.2
+    rough_score_thresh: 0.05
     refine_scan_resolution: 0.1
     refine_map_resolution: 0.1
     refine_max_iteration: 10
-    refine_score_thresh: 0.1
+    refine_score_thresh: 0.01
     max_correspondence_distance: 1.0  # meters, ignore point pairs further than this
     merge_maps_directory: /iserve_ws/maps   # default directory for merge_maps service
     navigation_maps_prefix: /ros2_ws/maps  # path prefix in navigation container
