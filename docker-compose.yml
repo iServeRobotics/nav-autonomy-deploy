@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   nav_autonomy:
     image: iserverobotics/nav_autonomy:${IMAGE_TAG:-jazzy}
