@@ -56,6 +56,8 @@ services:
         FG_PID=$!
         echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
+        echo "Starting iserve_map log analyzer (self)..."
+        TARGET_CONTAINER=iserve_map_humble LOG_FILE_PREFIX=iserve_map_ python3 /iserve_ws/scripts/log_analyzer.py &
         echo "Starting cloud sender..."
         python3 /iserve_ws/scripts/cloud_sender.py &
         if [ "$DATA_RECORDER_ENABLED" = "true" ]; then
@@ -121,6 +123,8 @@ services:
         FG_PID=$!
         echo "Starting nav_autonomy log analyzer..."
         python3 /iserve_ws/scripts/log_analyzer.py &
+        echo "Starting iserve_map log analyzer (self)..."
+        TARGET_CONTAINER=iserve_map_jazzy LOG_FILE_PREFIX=iserve_map_ python3 /iserve_ws/scripts/log_analyzer.py &
         echo "Starting cloud sender..."
         python3 /iserve_ws/scripts/cloud_sender.py &
         if [ "$DATA_RECORDER_ENABLED" = "true" ]; then
