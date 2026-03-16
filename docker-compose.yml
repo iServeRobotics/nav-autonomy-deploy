@@ -43,6 +43,8 @@ services:
       - UNITREE_IP=${UNITREE_IP:-192.168.12.1}
       - UNITREE_CONN=${UNITREE_CONN:-LocalAP}
       - AUTONOMY_SPEED=${AUTONOMY_SPEED:-1.0}
+      - ROBOT_CONFIG_PATH=${ROBOT_CONFIG_PATH:-}
+      - DISABLE_OBSTACLE_AVOIDANCE=${DISABLE_OBSTACLE_AVOIDANCE:-true}
 
     volumes:
       # X11 for GUI (RViz)
@@ -81,6 +83,11 @@ services:
         if [ "$USE_UNITREE" = "true" ]; then
           echo "Starting Unitree WebRTC control (IP: $UNITREE_IP, Method: $UNITREE_CONN)..."
           ros2 launch unitree_webrtc_ros unitree_control.launch.py robot_ip:=$UNITREE_IP connection_method:=$UNITREE_CONN &
+          # Launch Go2 camera bridge (WebRTC → ROS2 image topic + disable obstacle avoidance)
+          if echo "$ROBOT_CONFIG_PATH" | grep -qi "go2"; then
+            echo "Starting Go2 camera bridge..."
+            python3 /usr/local/bin/go2_camera_bridge.py &
+          fi
         fi
         # Start twist relay for Foxglove Teleop
         python3 /usr/local/bin/twist_relay.py &
