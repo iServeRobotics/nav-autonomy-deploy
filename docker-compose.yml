@@ -45,6 +45,7 @@ services:
       - AUTONOMY_SPEED=${AUTONOMY_SPEED:-1.0}
       - ROBOT_CONFIG_PATH=${ROBOT_CONFIG_PATH:-}
       - DISABLE_OBSTACLE_AVOIDANCE=${DISABLE_OBSTACLE_AVOIDANCE:-true}
+      - PUBLISH_CAMERA=${PUBLISH_CAMERA:-}
 
     volumes:
       # X11 for GUI (RViz)
@@ -81,10 +82,13 @@ services:
         sleep 2
         # Launch Unitree WebRTC control if enabled
         if [ "$USE_UNITREE" = "true" ]; then
-          # Determine if this is a Go2 (enables camera publishing via WebRTC video channel)
-          PUBLISH_CAM=false
-          if echo "$$ROBOT_CONFIG_PATH" | grep -qi "go2"; then
-            PUBLISH_CAM=true
+          # Camera defaults to true for Go2, override with PUBLISH_CAMERA=false in .env
+          PUBLISH_CAM=$${PUBLISH_CAMERA:-false}
+          if [ "$$PUBLISH_CAM" = "" ] || [ "$$PUBLISH_CAM" = "auto" ]; then
+            PUBLISH_CAM=false
+            if echo "$$ROBOT_CONFIG_PATH" | grep -qi "go2"; then
+              PUBLISH_CAM=true
+            fi
           fi
           echo "Starting Unitree WebRTC control (IP: $$UNITREE_IP, Method: $$UNITREE_CONN, camera: $$PUBLISH_CAM)..."
           ros2 launch unitree_webrtc_ros unitree_control.launch.py robot_ip:=$$UNITREE_IP connection_method:=$$UNITREE_CONN disable_obstacle_avoidance:=$$DISABLE_OBSTACLE_AVOIDANCE publish_camera:=$$PUBLISH_CAM &
