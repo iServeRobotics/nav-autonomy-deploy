@@ -83,11 +83,11 @@ services:
         if [ "$USE_UNITREE" = "true" ]; then
           # Determine if this is a Go2 (enables camera publishing via WebRTC video channel)
           PUBLISH_CAM=false
-          if echo "$ROBOT_CONFIG_PATH" | grep -qi "go2"; then
+          if echo "$$ROBOT_CONFIG_PATH" | grep -qi "go2"; then
             PUBLISH_CAM=true
           fi
-          echo "Starting Unitree WebRTC control (IP: $UNITREE_IP, Method: $UNITREE_CONN, camera: $PUBLISH_CAM)..."
-          ros2 launch unitree_webrtc_ros unitree_control.launch.py robot_ip:=$UNITREE_IP connection_method:=$UNITREE_CONN disable_obstacle_avoidance:=$DISABLE_OBSTACLE_AVOIDANCE publish_camera:=$PUBLISH_CAM &
+          echo "Starting Unitree WebRTC control (IP: $$UNITREE_IP, Method: $$UNITREE_CONN, camera: $$PUBLISH_CAM)..."
+          ros2 launch unitree_webrtc_ros unitree_control.launch.py robot_ip:=$$UNITREE_IP connection_method:=$$UNITREE_CONN disable_obstacle_avoidance:=$$DISABLE_OBSTACLE_AVOIDANCE publish_camera:=$$PUBLISH_CAM &
         fi
         # Start twist relay for Foxglove Teleop
         python3 /usr/local/bin/twist_relay.py &
