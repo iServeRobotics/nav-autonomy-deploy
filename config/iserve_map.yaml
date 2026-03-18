@@ -33,6 +33,7 @@ pose_repeater:
     repeat_count: 2                        # 0 = infinite, N = N loops
     auto_traverse: false                   # set true for traverse mode
     goal_wait_sec: 1.0                     # seconds to wait after reaching a goal before next
+    goal_timeout_sec: 30.0                # seconds to wait per waypoint, 0 = no timeout
 
 screen_display:
   ros__parameters:
