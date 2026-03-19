@@ -83,7 +83,7 @@ fi
 # nav-monitor and log-analyzer are now built into the iserve_map image
 # No separate monitor image needed
 
-mkdir -p maps logs/monitor logs/analyzer
+mkdir -p maps
 
 echo -e "${GREEN}================================================${NC}"
 echo -e "${GREEN}Deploying iServe Map + Monitor + Log Analyzer${NC}"

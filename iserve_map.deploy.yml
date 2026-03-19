@@ -8,6 +8,11 @@ services:
     shm_size: '2gb'
     network_mode: host
 
+    # RAM-backed working directory for logs and session data (1 GB)
+    tmpfs:
+      - /iserve_ws/logs:size=256m
+      - /iserve_ws/maps:size=768m
+
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
@@ -33,10 +38,10 @@ services:
       - DATA_RECORDER_ENABLED=${DATA_RECORDER_ENABLED:-false}
 
     volumes:
-      - ./maps:/iserve_ws/maps:rw
+      # Persistent maps on disk (copied to/from tmpfs on start/save)
+      - ./maps:/iserve_ws/maps_persist:rw
       - ./key.txt:/iserve_ws/config/key.txt:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
       - ./config/iserve_map.yaml:/iserve_ws/config/iserve_map.yaml:ro
 
     command:
@@ -46,6 +51,24 @@ services:
         echo "=== iServe Map (Humble) ==="
         echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
         echo "Auto-save: ON | Publish: OFF"
+
+        # Copy persistent maps from disk into RAM-backed tmpfs
+        if [ -d /iserve_ws/maps_persist/current_best_map ]; then
+          echo "Loading persistent maps into RAM..."
+          cp -a /iserve_ws/maps_persist/current_best_map /iserve_ws/maps/
+          echo "Loaded current_best_map ($(du -sh /iserve_ws/maps/current_best_map | cut -f1))"
+        fi
+
+        # Background sync: RAM → disk every 60s (best-effort, OK if disk full)
+        (
+          while true; do
+            sleep 60
+            if ! cp -a /iserve_ws/maps/* /iserve_ws/maps_persist/ 2>&1; then
+              echo "[sync] WARNING: failed to sync maps to disk (disk full?)" >&2
+            fi
+          done
+        ) &
+
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
           params_file:=/iserve_ws/config/iserve_map.yaml &
@@ -75,6 +98,11 @@ services:
     shm_size: '2gb'
     network_mode: host
 
+    # RAM-backed working directory for logs and session data (1 GB)
+    tmpfs:
+      - /iserve_ws/logs:size=256m
+      - /iserve_ws/maps:size=768m
+
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
@@ -100,10 +128,10 @@ services:
       - DATA_RECORDER_ENABLED=${DATA_RECORDER_ENABLED:-false}
 
     volumes:
-      - ./maps:/iserve_ws/maps:rw
+      # Persistent maps on disk (copied to/from tmpfs on start/save)
+      - ./maps:/iserve_ws/maps_persist:rw
       - ./key.txt:/iserve_ws/config/key.txt:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
       - ./config/iserve_map.yaml:/iserve_ws/config/iserve_map.yaml:ro
 
     command:
@@ -113,6 +141,24 @@ services:
         echo "=== iServe Map (Jazzy) ==="
         echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
         echo "Auto-save: ON | Publish: OFF"
+
+        # Copy persistent maps from disk into RAM-backed tmpfs
+        if [ -d /iserve_ws/maps_persist/current_best_map ]; then
+          echo "Loading persistent maps into RAM..."
+          cp -a /iserve_ws/maps_persist/current_best_map /iserve_ws/maps/
+          echo "Loaded current_best_map ($(du -sh /iserve_ws/maps/current_best_map | cut -f1))"
+        fi
+
+        # Background sync: RAM → disk every 60s (best-effort, OK if disk full)
+        (
+          while true; do
+            sleep 60
+            if ! cp -a /iserve_ws/maps/* /iserve_ws/maps_persist/ 2>&1; then
+              echo "[sync] WARNING: failed to sync maps to disk (disk full?)" >&2
+            fi
+          done
+        ) &
+
         bash /iserve_ws/config/monitor.sh ${MONITOR_INTERVAL:-1} &
         ros2 launch iserve_map iserve_map.launch.py \
           params_file:=/iserve_ws/config/iserve_map.yaml &
