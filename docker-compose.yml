@@ -46,6 +46,8 @@ services:
       - ROBOT_CONFIG_PATH=${ROBOT_CONFIG_PATH:-}
       - DISABLE_OBSTACLE_AVOIDANCE=${DISABLE_OBSTACLE_AVOIDANCE:-true}
       - PUBLISH_CAMERA=${PUBLISH_CAMERA:-}
+      # SLAM configuration
+      - LOCALIZATION_METHOD=${LOCALIZATION_METHOD:-}
 
     volumes:
       # X11 for GUI (RViz)
@@ -77,7 +79,14 @@ services:
       - -c
       - |
         echo "Starting real robot system with route planner..."
-        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py use_fastlio2:=true bridge_autonomy_speed:=$${AUTONOMY_SPEED:-1.0} &
+        if [ "$$LOCALIZATION_METHOD" = "arise_slam" ]; then
+          LAUNCH_ARGS="use_fastlio2:=false"
+          echo "  SLAM Method:       ARISE SLAM"
+        else
+          LAUNCH_ARGS="use_fastlio2:=true"
+          echo "  SLAM Method:       FASTLIO2"
+        fi
+        ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py $$LAUNCH_ARGS bridge_autonomy_speed:=$${AUTONOMY_SPEED:-1.0} &
         NAV_PID=$$!
         sleep 2
         # Launch Unitree WebRTC control if enabled
