@@ -67,7 +67,6 @@ Edit `.env` with your hardware details:
 
 ```bash
 docker compose up -d                        # Default: jazzy, detached
-IMAGE_TAG=humble docker compose up -d       # Use ROS 2 Humble
 docker compose logs -f                      # View logs
 docker compose down                         # Stop
 ```
