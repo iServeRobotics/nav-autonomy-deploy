@@ -63,7 +63,8 @@ Edit the `.env` file with your hardware details:
 ### 2. Start Navigation Stack
 
 ```bash
-docker compose up -d                        # Start (detached)
+docker compose up -d                        # Default: jazzy, detached
+docker compose logs -f                      # View logs
 docker compose down                         # Stop
 ```
 
