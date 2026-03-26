@@ -4,3 +4,4 @@ logs/*
 !logs/.gitkeep
 !maps/.gitkeep
 .iserve_license_accepted
+*.tar.gz
