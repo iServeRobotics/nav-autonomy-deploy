@@ -40,7 +40,7 @@ services:
       - LOCALIZATION_METHOD=${LOCALIZATION_METHOD:-}
       # OpenTelemetry configuration
       - OTEL_ENABLED=${OTEL_ENABLED:-true}
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4318}
       - OTEL_EXPORTER_OTLP_PROTOCOL=${OTEL_EXPORTER_OTLP_PROTOCOL:-http/json}
       - OTEL_REMOTE_ENDPOINT=${OTEL_REMOTE_ENDPOINT:-https://omakase-robotics.com}
       # Resumable upload (tus) configuration
