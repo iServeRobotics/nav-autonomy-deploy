@@ -95,7 +95,10 @@ services:
         # Start local OTel Collector if enabled
         if [ "$OTEL_ENABLED" = "true" ]; then
           echo "Starting local OTel Collector..."
-          mkdir -p /iserve_ws/otel_storage
+          # Export CLOUD_API_KEY from key.txt so the collector can use it for auth
+          if [ -f /iserve_ws/config/key.txt ]; then
+            export $(grep -v '^#' /iserve_ws/config/key.txt | grep '=' | xargs)
+          fi
           otelcol-contrib --config /iserve_ws/config/otel-collector.yaml &
         fi
         ros2 launch iserve_map iserve_map.launch.py \
