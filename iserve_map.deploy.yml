@@ -59,6 +59,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./logs/monitor:/iserve_ws/logs/monitor:rw
       - ./logs/analyzer:/iserve_ws/logs/analyzer:rw
+      - ./logs/otel_storage:/iserve_ws/otel_storage:rw
       - ./config/iserve_map.yaml:/iserve_ws/config/iserve_map.yaml:ro
 
     devices:

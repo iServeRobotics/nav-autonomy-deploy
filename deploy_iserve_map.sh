@@ -70,7 +70,7 @@ if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; t
     docker pull "$IMAGE"
 fi
 
-mkdir -p maps logs/monitor logs/analyzer
+mkdir -p maps logs/monitor logs/analyzer logs/otel_storage
 
 echo -e "${GREEN}================================================${NC}"
 echo -e "${GREEN}Deploying iServe Map + Monitor + Log Analyzer${NC}"
