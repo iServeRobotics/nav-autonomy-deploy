@@ -7,27 +7,7 @@ Docker-based deployment system for autonomous navigation on robotic platforms. O
 This repository provides deployment configurations and scripts to run the iServe Robotics navigation stack via Docker Compose.
 
 - **nav_autonomy** -- Core navigation stack including SLAM, path planning, localization, and robot control
-
-## Architecture
-
-```
-┌──────────────────────────────────────┐
-│            Host Machine              │
-│                                      │
-│  ┌────────────────────────────────┐  │
-│  │  nav_autonomy                  │  │
-│  │                                │  │
-│  │  - FASTLIO2 SLAM               │  │
-│  │  - Route Planner               │  │
-│  │  - ICP Localizer               │  │
-│  │  - Twist Relay                 │  │
-│  │  - Goal Relay                  │  │
-│  │  - Foxglove (:8765)            │  │
-│  └────────────────────────────────┘  │
-│                                      │
-│    Volumes: maps/ , logs/            │
-└──────────────────────────────────────┘
-```
+- **iserve_map** -- Mapping, monitoring, cloud telemetry, and log analysis
 
 ## Prerequisites
 
@@ -60,12 +40,21 @@ Edit the `.env` file with your hardware details:
 
 > **Important:** Double-check `ROBOT_IP` and `LIDAR_INTERFACE` match your actual hardware setup before starting.
 
-### 2. Start Navigation Stack
+### 2. Start Services
+
+Both `nav_autonomy` and `iserve_map` run from a single compose file:
 
 ```bash
-docker compose up -d                        # Default: jazzy, detached
-docker compose logs -f                      # View logs
-docker compose down                         # Stop
+docker compose up -d          # Start both services (detached)
+docker compose logs -f        # View logs
+docker compose down           # Stop both services
+```
+
+To run only one service:
+
+```bash
+docker compose up -d nav_autonomy    # Nav stack only
+docker compose up -d iserve_map      # iServe Map only
 ```
 
 **Fallback (without Docker Compose):**
@@ -87,58 +76,42 @@ If Docker Compose is not available, use the standalone script:
 Connect [Foxglove](https://foxglove.dev/) to the robot for remote monitoring:
 
 - **Navigation**: `ws://<robot-ip>:8765`
+- **iServe Map**: `ws://<robot-ip>:8766`
 
 Import `Overwwatch.json` into Foxglove for a pre-configured layout with 3D terrain view, autonomy status, and path visualization.
 
-To send a goal pose, click the **Publish** button ( ⬆ ) on the right toolbar of the 3D panel (highlighted in red below), then click on the map: the first click sets the position (x, y), and the second click sets the heading.
+To send a goal pose, click the **Publish** button on the right toolbar of the 3D panel (highlighted in red below), then click on the map: the first click sets the position (x, y), and the second click sets the heading.
 
 ![Pick a goal pose in Foxglove](assets/pick_goal.png)
 
 ## Updating Docker Images
 
-The deployment uses pre-built images from Docker Hub. To pull the latest version:
+Both services use pre-built images from Docker Hub. To pull the latest versions and restart:
 
 ```bash
-docker compose pull
-```
-
-Then restart the container to use the updated image:
-
-```bash
-docker compose down && docker compose up -d
+docker compose pull && docker compose down && docker compose up -d
 ```
 
 | Image | Tag | Source |
 |-------|-----|--------|
 | `iserverobotics/nav_autonomy` | `jazzy` | [nav_autonomy](https://github.com/iServeRobotics/nav_autonomy) |
-
-`docker compose pull` defaults to the `jazzy` tag.
+| `iserverobotics/iserve_map` | `jazzy` | [iserve_map](https://github.com/iServeRobotics/iserve_map) |
 
 ## Project Structure
 
 ```
 .
-├── docker-compose.yml          # Nav autonomy container orchestration
-├── iserve_map.deploy.yml       # iServe Map container orchestration
+├── docker-compose.yml          # Container orchestration (nav_autonomy + iserve_map)
 ├── run.sh                      # Launch script for nav_autonomy
-├── deploy_iserve_map.sh        # Launch script for iServe Map
 ├── .env                        # Hardware configuration
 ├── Overwwatch.json             # Foxglove visualization layout
 ├── maps/                       # Stored map PCD files
 ├── logs/                       # Runtime logs
-├── LICENSE                     # BSD-3-Clause (nav_autonomy deploy configs)
-└── LICENSE-ISERVE-MAP          # CC BY-NC 4.0 (iServe Map)
+└── LICENSE                     # BSD-3-Clause
 ```
 
 ## License
 
-This repository contains components under different licenses:
-
-| Component | License | Files |
-|-----------|---------|-------|
-| Nav autonomy (deploy configs, scripts) | [BSD-3-Clause](LICENSE) | `docker-compose.yml`, `run.sh`, `.env` |
-| iServe Map (image, deploy script) | [CC BY-NC 4.0](LICENSE-ISERVE-MAP) | `iserve_map.deploy.yml`, `deploy_iserve_map.sh` |
+[BSD-3-Clause](LICENSE)
 
 The nav_autonomy image is derived from the [CMU autonomy stack](https://github.com/jizhang-cmu/autonomy_stack_mecanum_wheel_platform) via [Vector Navigation Stack](https://github.com/VectorRobotics/vector_navigation_stack).
-
-For commercial use of iServe Map, contact: info@iserve.ai
