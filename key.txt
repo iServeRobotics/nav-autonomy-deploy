@@ -1,4 +1,0 @@
-# Omakase Cloud API credentials
-# This file is gitignored — do not commit
-CLOUD_API_KEY=ca13f732893875784fb62d770f847c4676f9c9741554aae4fb31e69f97e567f5
-CLOUD_ROBOT_ID=robot-01
