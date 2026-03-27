@@ -66,7 +66,8 @@ docker compose up -d iserve_map      # iServe Map only
 
 </details>
 
-**Fallback (without Docker Compose):**
+<details>
+<summary>Fallback (without Docker Compose)</summary>
 
 If Docker Compose is not available, use the standalone script:
 
@@ -79,6 +80,8 @@ If Docker Compose is not available, use the standalone script:
 > ```bash
 > curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-aarch64 -o ~/.docker/cli-plugins/docker-compose && chmod +x ~/.docker/cli-plugins/docker-compose
 > ```
+
+</details>
 
 ### 3. Connect Visualization
 
