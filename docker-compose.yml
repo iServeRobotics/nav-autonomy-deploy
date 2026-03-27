@@ -95,10 +95,6 @@ services:
           echo "Starting Unitree WebRTC control (IP: $$UNITREE_IP, Method: $$UNITREE_CONN, camera: $$PUBLISH_CAM)..."
           ros2 launch unitree_webrtc_ros unitree_control.launch.py robot_ip:=$$UNITREE_IP connection_method:=$$UNITREE_CONN disable_obstacle_avoidance:=$$DISABLE_OBSTACLE_AVOIDANCE publish_camera:=$$PUBLISH_CAM &
         fi
-        # Start twist relay for Foxglove Teleop
-        python3 /usr/local/bin/twist_relay.py &
-        # Start goal autonomy relay (enables autonomy when goal_pose received)
-        python3 /usr/local/bin/goal_autonomy_relay.py &
         echo "Starting Foxglove Bridge on port 8765..."
         ros2 run foxglove_bridge foxglove_bridge --ros-args -p port:=8765 -p send_buffer_limit:=100000000 -p max_qos_depth:=1 &
         if [ "$$USE_RVIZ" = "true" ]; then
