@@ -14,7 +14,7 @@ This repository provides deployment configurations and scripts to run the iServe
 - Docker & Docker Compose (v1.29+)
 - Linux host with network namespace support
 - Mid-360 LiDAR (or compatible)
-- Motor controller (serial)
+- Optional: Joystick controller (serial)
 - Optional: NVIDIA GPU with CUDA runtime
 - Optional: Unitree Go2/G1 robot
 - Optional: X11 server (for RViz visualization)
@@ -50,12 +50,21 @@ docker compose logs -f        # View logs
 docker compose down           # Stop both services
 ```
 
-To run only one service:
+To update both images and restart:
+
+```bash
+docker compose pull && docker compose down && docker compose up -d
+```
+
+<details>
+<summary>Run only one service</summary>
 
 ```bash
 docker compose up -d nav_autonomy    # Nav stack only
 docker compose up -d iserve_map      # iServe Map only
 ```
+
+</details>
 
 **Fallback (without Docker Compose):**
 
