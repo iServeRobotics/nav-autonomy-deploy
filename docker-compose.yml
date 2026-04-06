@@ -226,15 +226,15 @@ services:
           -p capabilities:="['services', 'clientPublish']" &
         FG_PID=$$!
         echo "Starting nav_autonomy monitor (target: $$TARGET_CONTAINER)..."
-        python3 /iserve_ws/scripts/nav_monitor.py &
+        python3 /iserve_ws/scripts/nav_monitor.pyc &
         echo "Starting nav_autonomy log analyzer (target: $$TARGET_CONTAINER)..."
-        python3 /iserve_ws/scripts/log_analyzer.py &
+        python3 /iserve_ws/scripts/log_analyzer.pyc &
         echo "Starting iserve_map log analyzer (self)..."
-        TARGET_CONTAINER=iserve_map_jazzy LOG_FILE_PREFIX=iserve_map_ python3 /iserve_ws/scripts/log_analyzer.py &
+        TARGET_CONTAINER=iserve_map_jazzy LOG_FILE_PREFIX=iserve_map_ python3 /iserve_ws/scripts/log_analyzer.pyc &
         echo "Starting cloud sender..."
-        python3 /iserve_ws/scripts/cloud_sender.py &
+        python3 /iserve_ws/scripts/cloud_sender.pyc &
         if [ "$$DATA_RECORDER_ENABLED" = "true" ]; then
           echo "Starting data recorder (image: $$DATA_RECORDER_IMAGE_TOPIC, rate: $${DATA_RECORDER_SAVE_RATE}Hz)..."
-          python3 /iserve_ws/scripts/perception_recorder.py &
+          python3 /iserve_ws/scripts/perception_recorder.pyc &
         fi
         wait $$MAP_PID $$FG_PID
