@@ -225,6 +225,9 @@ services:
           -p service_whitelist:="['/map_switcher/switch_map', '/pose_repeater/repeat_poses', '/pose_repeater/pause_repeat', '/pose_repeater/resume_repeat']" \
           -p capabilities:="['services', 'clientPublish']" &
         FG_PID=$$!
+        echo "Starting on-robot-gui on port 8080..."
+        cd /app/gui/backend && NAV_DEPLOY_DIR=/iserve_ws FOXGLOVE_URL=ws://localhost:8766 uvicorn main:app --host 0.0.0.0 --port 8080 &
+        cd /iserve_ws
         echo "Starting nav_autonomy monitor (target: $$TARGET_CONTAINER)..."
         python3 /iserve_ws/scripts/nav_monitor.pyc &
         echo "Starting nav_autonomy log analyzer (target: $$TARGET_CONTAINER)..."
