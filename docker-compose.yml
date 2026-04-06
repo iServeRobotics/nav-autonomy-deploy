@@ -163,11 +163,11 @@ services:
     devices:
       - /dev/bus/usb:/dev/bus/usb
 
+    entrypoint: ["/ros_entrypoint.sh"]
     command:
       - bash
       - -c
       - |
-        source /opt/ros/$${ROS_DISTRO}/setup.bash && source /iserve_ws/install/setup.bash && export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
         echo "=== iServe Map (Jazzy) ==="
         echo "ROS_DOMAIN_ID: $$ROS_DOMAIN_ID"
         echo "Auto-save: ON | Publish: OFF"
