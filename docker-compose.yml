@@ -167,6 +167,9 @@ services:
       - bash
       - -c
       - |
+        source /opt/ros/$${ROS_DISTRO}/setup.bash
+        source /iserve_ws/install/setup.bash
+        export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
         echo "=== iServe Map (Jazzy) ==="
         echo "ROS_DOMAIN_ID: $$ROS_DOMAIN_ID"
         echo "Auto-save: ON | Publish: OFF"
@@ -216,7 +219,13 @@ services:
             rgb_camera.color_profile:=$${CAMERA_WIDTH:-640},$${CAMERA_HEIGHT:-480},$${CAMERA_FPS:-6} &
         fi
         echo "Starting Foxglove Bridge on port 8766..."
-        ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8766 &
+        ros2 run foxglove_bridge foxglove_bridge --ros-args \
+          -p port:=8766 \
+          -p send_buffer_limit:=100000000 \
+          -p max_qos_depth:=1 \
+          -p topic_whitelist:="['/pose_repeater/waypoint_status', '/state_estimation', '/battery_state', '/lidar_health/status', '/icp_session/icp_result', '/iserve_map/recommended_map', '/goal_pose', '/room_segmentation/room_map', '/room_segmentation/room_markers', '/room_segmentation/room_boundaries', '/room_segmentation/status']" \
+          -p service_whitelist:="['/map_switcher/switch_map', '/pose_repeater/repeat_poses', '/pose_repeater/pause_repeat', '/pose_repeater/resume_repeat']" \
+          -p capabilities:="['services', 'clientPublish']" &
         FG_PID=$$!
         echo "Starting nav_autonomy monitor (target: $$TARGET_CONTAINER)..."
         python3 /iserve_ws/scripts/nav_monitor.py &
