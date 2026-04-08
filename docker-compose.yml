@@ -69,10 +69,19 @@ services:
       - ${INPUT_GID:-995}
       - ${DIALOUT_GID:-20}
 
+    # Real-time scheduling and memory locking for FastLIO / lidar driver
+    ulimits:
+      rtprio: 99
+      memlock:
+        soft: -1
+        hard: -1
+      nice: -20
+
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_TIME
+      - SYS_NICE
 
     command:
       - bash
