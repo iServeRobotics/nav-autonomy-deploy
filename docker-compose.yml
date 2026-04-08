@@ -208,8 +208,8 @@ services:
           if [ -f /iserve_ws/config/key.txt ]; then
             export $$(grep -v '^#' /iserve_ws/config/key.txt | grep '=' | xargs)
           fi
-          # Clear corrupted bbolt DB files to prevent collector crash
-          find /iserve_ws/otel_storage -name "*.db" -delete 2>/dev/null || true
+          # Clear corrupted bbolt storage to prevent collector crash on restart
+          rm -rf /iserve_ws/otel_storage/* 2>/dev/null || true
           otelcol-contrib --config /iserve_ws/config/otel-collector.yaml &
         fi
         ros2 launch iserve_map iserve_map.launch.py \
