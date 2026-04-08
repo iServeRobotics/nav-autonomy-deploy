@@ -237,7 +237,7 @@ services:
           -p capabilities:="['services', 'clientPublish']" &
         FG_PID=$$!
         echo "Starting on-robot-gui on port 8080..."
-        cd /app/gui/backend && NAV_DEPLOY_DIR=/iserve_ws FOXGLOVE_URL=ws://localhost:8766 uvicorn main:app --host 0.0.0.0 --port 8080 &
+        cd /app/gui/backend && NAV_DEPLOY_DIR=/iserve_ws MAPS_DIR=/iserve_ws/maps_persist FOXGLOVE_URL=ws://localhost:8766 uvicorn main:app --host 0.0.0.0 --port 8080 &
         cd /iserve_ws
         echo "Starting nav_autonomy monitor (target: $$TARGET_CONTAINER)..."
         python3 /iserve_ws/scripts/nav_monitor.pyc &
