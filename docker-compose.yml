@@ -95,6 +95,7 @@ services:
           LAUNCH_ARGS="use_fastlio2:=true"
           echo "  SLAM Method:       FASTLIO2"
         fi
+        [ -n "$$MAP_PATH" ] && LAUNCH_ARGS="$$LAUNCH_ARGS traverse_poses_file:=$$MAP_PATH/traverse_poses.txt"
         ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py $$LAUNCH_ARGS bridge_autonomy_speed:=$${AUTONOMY_SPEED:-1.0} &
         NAV_PID=$$!
         sleep 2
