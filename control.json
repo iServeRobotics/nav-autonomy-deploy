@@ -1,0 +1,82 @@
+{
+  "_watermark": {
+    "creator": "DIMOS Navigation",
+    "author": "bona",
+    "organization": "iServe Robotics",
+    "version": "1.0",
+    "timestamp": "2026-01-17",
+    "signature": "dimos-nav-overwatch-layout"
+  },
+  "configById": {
+    "CallService!cfbe5r": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "serviceName": "/traverse/start"
+    },
+    "RawMessages!jnhqww": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/icp_session/reference_map",
+      "fontSize": 12
+    },
+    "RawMessages!400d27r": {
+      "topicPath": "/lidar_health/status"
+    },
+    "RawMessages!3muicn8": {
+      "topicPath": "/pause_navigation"
+    },
+    "CallService!s27yng": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "serviceName": "/traverse/pause"
+    },
+    "CallService!1806e9h": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "serviceName": "/traverse/pause"
+    },
+    "CallService!c0x4dc": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 10
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "first": {
+      "first": "CallService!cfbe5r",
+      "second": {
+        "first": "RawMessages!jnhqww",
+        "second": "CallService!c0x4dc",
+        "direction": "column",
+        "splitPercentage": 34.644329805708914
+      },
+      "direction": "column",
+      "splitPercentage": 28.786128064148397
+    },
+    "second": {
+      "first": "RawMessages!400d27r",
+      "second": {
+        "first": "RawMessages!3muicn8",
+        "second": {
+          "first": "CallService!s27yng",
+          "second": "CallService!1806e9h",
+          "direction": "row"
+        },
+        "direction": "column"
+      },
+      "direction": "column"
+    },
+    "direction": "row",
+    "splitPercentage": 44.67554076539101
+  }
+}

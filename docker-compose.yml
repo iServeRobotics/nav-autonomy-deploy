@@ -232,8 +232,8 @@ services:
           -p port:=8766 \
           -p send_buffer_limit:=100000000 \
           -p max_qos_depth:=1 \
-          -p topic_whitelist:="['/pose_repeater/waypoint_status', '/state_estimation', '/battery_state', '/lidar_health/status', '/icp_session/icp_result', '/iserve_map/recommended_map', '/goal_pose', '/room_segmentation/room_map', '/room_segmentation/room_markers', '/room_segmentation/room_boundaries', '/room_segmentation/status']" \
-          -p service_whitelist:="['/map_switcher/switch_map', '/pose_repeater/repeat_poses', '/pose_repeater/pause_repeat', '/pose_repeater/resume_repeat']" \
+          -p topic_whitelist:="['/traverse/waypoint_status', '/state_estimation', '/battery_state', '/lidar_health/status', '/icp_session/icp_result', '/iserve_map/recommended_map', '/goal_pose', '/room_segmentation/room_map', '/room_segmentation/room_markers', '/room_segmentation/room_boundaries', '/room_segmentation/status']" \
+          -p service_whitelist:="['/map_switcher/switch_map', '/traverse/start', '/traverse/stop', '/traverse/pause']" \
           -p capabilities:="['services', 'clientPublish']" &
         FG_PID=$$!
         echo "Starting on-robot-gui on port 8080..."

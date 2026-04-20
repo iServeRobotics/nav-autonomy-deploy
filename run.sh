@@ -56,7 +56,7 @@ fi
 docker rm ${CONTAINER_NAME} 2>/dev/null || true
 
 # Image
-IMAGE="iserverobotics/nav_autonomy:${DISTRO}-omakase"
+IMAGE="iserverobotics/nav_autonomy:${DISTRO}"
 
 # Pull if not available
 if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${IMAGE}$"; then

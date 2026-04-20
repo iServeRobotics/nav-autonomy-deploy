@@ -23,17 +23,13 @@ map_switcher:
     relocalize_service: /localizer/relocalize
     recommended_map_topic: /iserve_map/recommended_map
 
-pose_repeater:
+traverse:
   ros__parameters:
-    save_directory: /iserve_ws/maps
     goal_pose_topic: /goal_pose
     reach_goal_topic: /far_reach_goal_status
-    odom_topic: /state_estimation
-    odom_log_rate: 20.0                    # Hz, 0 to disable
     repeat_count: 2                        # 0 = infinite, N = N loops
-    auto_traverse: false                   # set true for traverse mode
     goal_wait_sec: 1.0                     # seconds to wait after reaching a goal before next
-    goal_timeout_sec: 30.0                # seconds to wait per waypoint, 0 = no timeout
+    goal_timeout_sec: 30.0                 # seconds to wait per waypoint, 0 = no timeout
 
 screen_display:
   ros__parameters:

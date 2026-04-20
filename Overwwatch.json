@@ -297,7 +297,7 @@
         "/pgo/loop_markers": {
           "visible": false
         },
-        "/pose_repeater/pose_markers": {
+        "/traverse/pose_markers": {
           "visible": true
         },
         "/icp_session/reference_map": {
