@@ -49,7 +49,7 @@ lidar_health:
     imu_topic_alt: /livox/imu        # fallback — either topic having >=200Hz is healthy
     check_interval: 1.0              # seconds between Hz checks (= window length)
     lidar_min_hz: 9.0                # warn if lidar below this Hz
-    imu_min_hz: 200.0                # warn if IMU below this Hz
+    imu_min_hz: 195.0                # warn if IMU below this Hz
     stale_timeout: 5.0               # seconds with 0 msgs = ERROR
 
 room_segmentation:
