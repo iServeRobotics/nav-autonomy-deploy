@@ -46,10 +46,23 @@ lidar_health:
   ros__parameters:
     lidar_topic: /registered_scan
     imu_topic: /imu/data
+    imu_topic_alt: /livox/imu        # fallback — either topic having >=200Hz is healthy
     check_interval: 1.0              # seconds between Hz checks (= window length)
     lidar_min_hz: 9.0                # warn if lidar below this Hz
-    imu_min_hz: 190.0                # warn if IMU below this Hz
+    imu_min_hz: 200.0                # warn if IMU below this Hz
     stale_timeout: 5.0               # seconds with 0 msgs = ERROR
+
+room_segmentation:
+  ros__parameters:
+    grid_resolution: 0.05            # cell size in meters
+    z_max: 0.3                       # max terrain z-height to include (floor vs walls in aggregated_map)
+    min_point_count: 3               # min points per cell to mark observed
+    erosion_radius: 0.35             # meters (~half doorway width)
+    min_room_area: 1.0               # m², smaller blobs absorbed
+    resegment_distance: 2.0          # re-run after this travel distance
+    resegment_interval: 5.0          # max seconds between re-segmentations
+    hallway_aspect_ratio: 3.0        # aspect ratio threshold for hallway classification
+    save_directory: /iserve_ws/maps  # where to write room_segmentation.json + room_labels.csv
 
 icp_session:
   ros__parameters:
