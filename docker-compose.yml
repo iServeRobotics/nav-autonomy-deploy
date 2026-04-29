@@ -49,6 +49,9 @@ services:
       - PUBLISH_CAMERA=${PUBLISH_CAMERA:-}
       # SLAM configuration
       - LOCALIZATION_METHOD=${LOCALIZATION_METHOD:-}
+      # Vision semantic API
+      - ROBOT_HOST=${ROBOT_HOST:-}
+      - ROBOT_STATUS_PORT=${ROBOT_STATUS_PORT:-8080}
 
     volumes:
       # X11 for GUI (RViz)
@@ -97,6 +100,7 @@ services:
           echo "  SLAM Method:       FASTLIO2"
         fi
         [ -n "$$MAP_PATH" ] && LAUNCH_ARGS="$$LAUNCH_ARGS traverse_poses_file:=$$MAP_PATH/traverse_poses.txt"
+        [ -n "$$ROBOT_HOST" ] && LAUNCH_ARGS="$$LAUNCH_ARGS traverse_semantic_api_url:=http://$$ROBOT_HOST:$${ROBOT_STATUS_PORT:-8080}/api/vision/semantic"
         ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py $$LAUNCH_ARGS bridge_autonomy_speed:=$${AUTONOMY_SPEED:-1.0} &
         NAV_PID=$$!
         sleep 2
