@@ -52,6 +52,7 @@ services:
       # Vision semantic API
       - ROBOT_HOST=${ROBOT_HOST:-}
       - ROBOT_STATUS_PORT=${ROBOT_STATUS_PORT:-8080}
+      - SEMANTIC_TAG_WRITEBACK=${SEMANTIC_TAG_WRITEBACK:-false}
 
     volumes:
       # X11 for GUI (RViz)
@@ -101,6 +102,7 @@ services:
         fi
         [ -n "$$MAP_PATH" ] && LAUNCH_ARGS="$$LAUNCH_ARGS traverse_poses_file:=$$MAP_PATH/traverse_poses.txt"
         [ -n "$$ROBOT_HOST" ] && LAUNCH_ARGS="$$LAUNCH_ARGS traverse_semantic_api_url:=http://$$ROBOT_HOST:$${ROBOT_STATUS_PORT:-8080}/api/vision/semantic"
+        LAUNCH_ARGS="$$LAUNCH_ARGS traverse_semantic_tag_writeback:=$${SEMANTIC_TAG_WRITEBACK:-false}"
         ros2 launch vehicle_simulator system_real_robot_with_route_planner.launch.py $$LAUNCH_ARGS bridge_autonomy_speed:=$${AUTONOMY_SPEED:-1.0} &
         NAV_PID=$$!
         sleep 2
