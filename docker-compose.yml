@@ -157,6 +157,7 @@ services:
       - PCD_UPLOAD_DIR=${PCD_UPLOAD_DIR:-/iserve_ws/maps/current_best_map}
       - SESSION_UPLOAD_INTERVAL=${SESSION_UPLOAD_INTERVAL:-30.0}
       - LOCALIZATION_METHOD=${LOCALIZATION_METHOD:-}
+      - MAPS_SYNC_ENABLED=${MAPS_SYNC_ENABLED:-true}
       - OTEL_ENABLED=${OTEL_ENABLED:-true}
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4318}
       - OTEL_EXPORTER_OTLP_PROTOCOL=${OTEL_EXPORTER_OTLP_PROTOCOL:-http/json}
@@ -198,15 +199,22 @@ services:
           echo "Loaded current_best_map ($$(du -sh /iserve_ws/maps/current_best_map | cut -f1))"
         fi
 
-        # Background sync: RAM → disk every 60s (best-effort, OK if disk full)
-        (
-          while true; do
-            sleep 60
-            if ! cp -a /iserve_ws/maps/* /iserve_ws/maps_persist/ 2>&1; then
-              echo "[sync] WARNING: failed to sync maps to disk (disk full?)" >&2
-            fi
-          done
-        ) &
+        # Background sync: RAM → disk every 60s (best-effort, OK if disk full).
+        # current_best_map is excluded — it is the selected/curated map and must
+        # not be overwritten by live session data. Set MAPS_SYNC_ENABLED=false to
+        # disable the sync entirely (e.g. when maps are on a direct volume mount).
+        if [ "$${MAPS_SYNC_ENABLED:-true}" = "true" ]; then
+          (
+            while true; do
+              sleep 60
+              if ! rsync -a --exclude='current_best_map/' /iserve_ws/maps/ /iserve_ws/maps_persist/ 2>&1; then
+                echo "[sync] WARNING: failed to sync maps to disk (disk full?)" >&2
+              fi
+            done
+          ) &
+        else
+          echo "[sync] Maps disk sync disabled (MAPS_SYNC_ENABLED=false)"
+        fi
 
         bash /iserve_ws/config/monitor.sh $${MONITOR_INTERVAL:-1} &
         # Start local OTel Collector if enabled
