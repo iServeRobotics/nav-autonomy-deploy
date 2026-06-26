@@ -199,19 +199,32 @@ services:
           echo "Loaded current_best_map ($$(du -sh /iserve_ws/maps/current_best_map | cut -f1))"
         fi
 
-        # Background sync: RAM → disk every 60s (best-effort, OK if disk full).
+        # Background sync: RAM → disk every 15s (best-effort, OK if disk full).
         # current_best_map is excluded — it is the selected/curated map and must
         # not be overwritten by live session data. Set MAPS_SYNC_ENABLED=false to
         # disable the sync entirely (e.g. when maps are on a direct volume mount).
+        # cp loop instead of rsync (not installed in image).
+        flush_maps() {
+          for d in /iserve_ws/maps/*; do
+            [ -e "$$d" ] || continue
+            b=$$(basename "$$d")
+            [ "$$b" = "current_best_map" ] && continue
+            cp -a "$$d" /iserve_ws/maps_persist/ || return 1
+          done
+        }
         if [ "$${MAPS_SYNC_ENABLED:-true}" = "true" ]; then
           (
             while true; do
-              sleep 60
-              if ! rsync -a --exclude='current_best_map/' /iserve_ws/maps/ /iserve_ws/maps_persist/ 2>&1; then
+              sleep 15
+              if ! flush_maps 2>&1; then
                 echo "[sync] WARNING: failed to sync maps to disk (disk full?)" >&2
               fi
             done
           ) &
+          SYNC_PID=$$!
+          # Final flush on container stop (SIGTERM from docker stop / compose down)
+          # so the tail of a session reaches disk. Does not cover SIGKILL.
+          trap 'echo "[sync] final flush before shutdown..."; kill $$SYNC_PID 2>/dev/null; flush_maps; exit 0' TERM INT
         else
           echo "[sync] Maps disk sync disabled (MAPS_SYNC_ENABLED=false)"
         fi

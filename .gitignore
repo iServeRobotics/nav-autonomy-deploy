@@ -1,8 +1,8 @@
-maps/*.pcd
-maps/*.pickle
+# Runtime-generated session maps & ICP artifacts — keep dir, ignore contents
+maps/*
+!maps/.gitkeep
 logs/*
 !logs/.gitkeep
-!maps/.gitkeep
 *.tar.gz
 key.txt
 .env
