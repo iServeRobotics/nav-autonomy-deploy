@@ -9,6 +9,34 @@ NC='\033[0m'
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
+# --- kernel UDP buffers (FAST-LIO2 drift guard) ------------------------------
+# fastlio2's point-cloud socket never requests a larger SO_RCVBUF, so it gets
+# net.core.rmem_default. At the 8MB kernel default it overflows on Mid360
+# bursts -> dropped frames -> odometry drift (omakase2 2026-07-14: 10.3M drops
+# on the fastlio2 socket while rmem_max was already 512MB). BOTH the ceiling
+# and the default must be raised; persisted so reboots keep it.
+RMEM_MAX_WANT=536870912       # 512MB ceiling
+RMEM_DEFAULT_WANT=134217728   # 128MB default (what fastlio2 actually gets)
+rmem_ok() {
+    [ "$(sysctl -n net.core.rmem_max)" -ge "$RMEM_MAX_WANT" ] && \
+    [ "$(sysctl -n net.core.rmem_default)" -ge "$RMEM_DEFAULT_WANT" ]
+}
+if ! rmem_ok; then
+    echo -e "${YELLOW}UDP buffers below nav requirements - raising (needs sudo)...${NC}"
+    if sudo sysctl -w net.core.rmem_max="$RMEM_MAX_WANT" net.core.rmem_default="$RMEM_DEFAULT_WANT"; then
+        sudo tee /etc/sysctl.d/60-omakase-nav-rmem.conf >/dev/null <<SYSEOF
+# nav stack: fastlio2 relies on net.core.rmem_default (it never calls
+# setsockopt(SO_RCVBUF)); 8MB drops Mid360 point-cloud bursts and the
+# odometry drifts. Keep default >= 128MB and ceiling >= 512MB.
+net.core.rmem_max = $RMEM_MAX_WANT
+net.core.rmem_default = $RMEM_DEFAULT_WANT
+SYSEOF
+        echo -e "${GREEN}UDP buffers raised and persisted to /etc/sysctl.d/60-omakase-nav-rmem.conf${NC}"
+    else
+        echo -e "${RED}WARNING: could not raise UDP buffers (no sudo?) - expect FAST-LIO drift from dropped point clouds.${NC}"
+    fi
+fi
+
 # Default values
 DISTRO="jazzy"
 DETACH=false
